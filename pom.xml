@@ -19,7 +19,6 @@
     </properties>
 
     <modules>
-        <module>trust-store-loader</module>
         <module>transaction-flow</module>
     </modules>
 
