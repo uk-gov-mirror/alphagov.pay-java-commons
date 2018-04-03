@@ -11,6 +11,8 @@
 
     <artifactId>transaction-flow</artifactId>
 
+    <packaging>jar</packaging>
+
     <properties>
         <guice.version>4.1.0</guice.version>
         <jpa.version>2.6.4</jpa.version>

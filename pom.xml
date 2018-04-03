@@ -21,6 +21,7 @@
     <modules>
         <module>trust-store-loader</module>
         <module>transaction-flow</module>
+        <module>commons-utils</module>
     </modules>
 
     <dependencies>
