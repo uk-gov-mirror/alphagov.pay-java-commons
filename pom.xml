@@ -21,6 +21,7 @@
     <modules>
         <module>trust-store-loader</module>
         <module>transaction-flow</module>
+        <module>utils</module>
     </modules>
 
     <dependencies>
@@ -117,7 +118,7 @@
             <plugin>
                 <groupId>com.github.danielflower.mavenplugins</groupId>
                 <artifactId>multi-module-maven-release-plugin</artifactId>
-                <version>2.1.4</version>
+                <version>2.2.0</version>
             </plugin>
         </plugins>
     </build>
