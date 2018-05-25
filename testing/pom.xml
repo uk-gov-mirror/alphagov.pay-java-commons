@@ -9,9 +9,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>utils</artifactId>
+    <artifactId>testing</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Pay Common Utils</name>
+    <name>Testing Utils</name>
     <packaging>jar</packaging>
 
     <distributionManagement>
