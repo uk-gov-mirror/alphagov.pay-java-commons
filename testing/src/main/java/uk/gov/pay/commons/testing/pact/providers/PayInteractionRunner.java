@@ -1,4 +1,4 @@
-package uk.gov.pay.commons.testing.pact;
+package uk.gov.pay.commons.testing.pact.providers;
 
 import au.com.dius.pact.model.BrokerUrlSource;
 import au.com.dius.pact.model.Interaction;
@@ -83,7 +83,7 @@ public class PayInteractionRunner extends InteractionRunner {
             HttpResponse response = httpClient.execute(request);
             if (response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
                 throw new RuntimeException("Did not receive a CREATED 201 from Pact Broker when publishing verification result, response was " +
-                        IOUtils.toString(response.getEntity().getContent(), Charset.defaultCharset()));
+                        IOUtils.toString(response.getEntity().getContent()));
             }
             LOGGER.info("Verification results published successfully.");
         } catch (IOException e) {

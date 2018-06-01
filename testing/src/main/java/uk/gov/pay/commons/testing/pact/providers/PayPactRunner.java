@@ -1,4 +1,4 @@
-package uk.gov.pay.commons.testing.pact;
+package uk.gov.pay.commons.testing.pact.providers;
 
 import au.com.dius.pact.model.Pact;
 import au.com.dius.pact.model.PactSource;

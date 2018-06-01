@@ -1,4 +1,4 @@
-package uk.gov.pay.commons.testing.pact;
+package uk.gov.pay.commons.testing.pact.providers;
 
 import au.com.dius.pact.model.BrokerUrlSource;
 import au.com.dius.pact.model.FileSource;
@@ -18,6 +18,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.TestClass;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import uk.gov.pay.commons.testing.pact.providers.PayInteractionRunner;
+import uk.gov.pay.commons.testing.pact.providers.PayPactRunner;
 
 import java.io.File;
 import java.util.List;
