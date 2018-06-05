@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>pay-java-commons</groupId>
+        <groupId>uk.gov.pay</groupId>
         <artifactId>pay-java-commons</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>testing</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <name>Testing Utils</name>
     <packaging>jar</packaging>
+    <version>1.0</version>
 
     <properties>
         <pact.version>3.5.16</pact.version>
