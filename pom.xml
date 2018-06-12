@@ -6,7 +6,7 @@
 
     <groupId>uk.gov.pay</groupId>
     <artifactId>pay-java-commons</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>GOVUK Pay java common repository</name>
@@ -15,6 +15,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
         <assertj.version>1.7.25</assertj.version>
+        <bintray.username/>
+        <bintray.apiKey/>
     </properties>
 
     <modules>
@@ -102,18 +104,14 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.github.danielflower.mavenplugins</groupId>
-                <artifactId>multi-module-maven-release-plugin</artifactId>
-                <version>2.2.0</version>
-            </plugin>
         </plugins>
     </build>
 
     <distributionManagement>
         <repository>
-            <id>govukpay-bintray-repo</id>
-            <url>https://api.bintray.com/govuk-pay/pay-java-commons/;publish=1</url>
+            <id>bintray-govuk-pay-pay-java-commons</id>
+            <name>govuk-pay-pay-java-commons</name>
+            <url>https://api.bintray.com/maven/govuk-pay/pay-java-commons/pay-java-commons/;publish=1</url>
         </repository>
     </distributionManagement>
 

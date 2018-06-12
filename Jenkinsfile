@@ -21,14 +21,20 @@ pipeline {
         script {
           def long stepBuildTime = System.currentTimeMillis()
 
-          sh 'mvn clean package'
+          withCredentials([
+                  string(credentialsId: 'bintray_username', variable: 'BINTRAY_USERNAME'),
+                  string(credentialsId: 'bintray_apiKey', variable: 'BINTRAY_APIKEY')]
+          ) {
+            sh 'mvn versions:set -DnewVersion=1.0.0-${BUILD_NUMBER}'
+            sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy '
+          }
 
           postSuccessfulMetrics("pay-java-commons.maven-build", stepBuildTime)
         }
       }
       post {
         failure {
-          postMetric("publicapi.maven-build.failure", 1)
+          postMetric("ay-java-commons.maven-build.failure", 1)
         }
       }
     }
