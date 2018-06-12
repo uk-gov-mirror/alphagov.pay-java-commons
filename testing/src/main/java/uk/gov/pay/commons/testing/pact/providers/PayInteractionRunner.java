@@ -28,9 +28,9 @@ import javax.json.JsonObject;
 import javax.json.JsonWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class PayInteractionRunner extends InteractionRunner {
 
@@ -44,7 +44,7 @@ public class PayInteractionRunner extends InteractionRunner {
 
     public PayInteractionRunner(TestClass testClass, Pact<? extends Interaction> pact, PactSource pactSource) throws InitializationError {
         super(testClass, pact, pactSource);
-        masterBranchGitSha = System.getProperty("PROVIDER_SHA");
+        masterBranchGitSha = Optional.ofNullable(System.getenv("PROVIDER_SHA")).orElse(System.getProperty("PROVIDER_SHA"));
         throwIfErrors(pact.getSource(), masterBranchGitSha);
         init((BrokerUrlSource) pact.getSource());
     }
