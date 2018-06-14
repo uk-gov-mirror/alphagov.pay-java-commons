@@ -33,7 +33,7 @@ pipeline {
       }
       post {
         failure {
-          postMetric("ay-java-commons.maven-build.failure", 1)
+          postMetric("pay-java-commons.maven-build.failure", 1)
         }
       }
     }
