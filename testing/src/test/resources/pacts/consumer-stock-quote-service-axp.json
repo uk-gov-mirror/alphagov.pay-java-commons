@@ -1,9 +1,9 @@
 {
   "consumer": {
-    "name": "publicapi"
+    "name": "consumer"
   },
   "provider": {
-    "name": "publicauth"
+    "name": "stock-quote-service"
   },
   "interactions": [
     {

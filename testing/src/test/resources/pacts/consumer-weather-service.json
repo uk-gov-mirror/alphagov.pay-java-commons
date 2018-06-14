@@ -1,16 +1,16 @@
 {
   "consumer": {
-    "name": "publicapi"
+    "name": "consumer"
   },
   "provider": {
-    "name": "publicauth"
+    "name": "weather-service"
   },
   "interactions": [
     {
-      "description": "Request for Visa price",
+      "description": "Get weather for London",
       "request": {
         "method": "GET",
-        "path": "/stocks/V"
+        "path": "/weather/London"
       },
       "response": {
         "status": 200,
@@ -18,18 +18,12 @@
           "Content-Type": "application/json"
         },
         "body": {
-          "name": "Visa",
-          "price": "200.00",
-          "currency": "USD"
+          "name": "London",
+          "temperature": "25",
+          "unit": "degrees"
         },
         "matchingRules": {
-          "$.body.name": {
-            "match": "type"
-          },
-          "$.body.currency": {
-            "match": "type"
-          },
-          "$.body.price": {
+          "$.body.temperature": {
             "match": "type"
           }
         }
