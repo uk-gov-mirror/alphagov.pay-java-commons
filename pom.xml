@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pay-java-commons</groupId>
+    <groupId>uk.gov.pay</groupId>
     <artifactId>pay-java-commons</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>GOVUK Pay java common repository</name>
@@ -14,41 +14,20 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <hamcrest.version>1.3</hamcrest.version>
+        <assertj.version>1.7.25</assertj.version>
+        <bintray.username/>
+        <bintray.apiKey/>
     </properties>
 
     <modules>
-        <module>trust-store-loader</module>
-        <module>transaction-flow</module>
-        <module>utils</module>
+        <module>testing</module>
     </modules>
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <!-- test dependencies-->
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>${hamcrest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.10.0</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -61,6 +40,18 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -91,7 +82,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -114,18 +104,13 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>com.github.danielflower.mavenplugins</groupId>
-                <artifactId>multi-module-maven-release-plugin</artifactId>
-                <version>2.2.0</version>
-            </plugin>
         </plugins>
     </build>
 
     <distributionManagement>
         <repository>
-            <id>govukpay-bintray-repo</id>
+            <id>bintray-govuk-pay-pay-java-commons</id>
+            <name>govuk-pay-pay-java-commons</name>
             <url>https://api.bintray.com/maven/govuk-pay/pay-java-commons/pay-java-commons/;publish=1</url>
         </repository>
     </distributionManagement>
