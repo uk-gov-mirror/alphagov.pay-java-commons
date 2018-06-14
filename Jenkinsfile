@@ -17,15 +17,17 @@ pipeline {
       steps {
         script {
           def long stepBuildTime = System.currentTimeMillis()
-
-          withCredentials([
-                  string(credentialsId: 'bintray_username', variable: 'BINTRAY_USERNAME'),
-                  string(credentialsId: 'bintray_api_key', variable: 'BINTRAY_APIKEY')]
-          ) {
-            sh 'mvn versions:set -DnewVersion=1.0.0-${BUILD_NUMBER}'
-            sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy'
+          if (env.BRANCH_NAME == 'master') {
+            withCredentials([
+                    string(credentialsId: 'bintray_username', variable: 'BINTRAY_USERNAME'),
+                    string(credentialsId: 'bintray_api_key', variable: 'BINTRAY_APIKEY')]
+            ) {
+              sh 'mvn versions:set -DnewVersion=1.0.0-${BUILD_NUMBER}'
+              sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy'
+            }
+          } else {
+            sh 'mvn clean install'
           }
-
           postSuccessfulMetrics("pay-java-commons.maven-build", stepBuildTime)
         }
       }
