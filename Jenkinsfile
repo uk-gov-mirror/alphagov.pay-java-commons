@@ -12,9 +12,6 @@ pipeline {
     lib("pay-jenkins-library@master")
   }
 
-  environment {
-  }
-
   stages {
     stage('Maven Build') {
       steps {
@@ -23,10 +20,10 @@ pipeline {
 
           withCredentials([
                   string(credentialsId: 'bintray_username', variable: 'BINTRAY_USERNAME'),
-                  string(credentialsId: 'bintray_apiKey', variable: 'BINTRAY_APIKEY')]
+                  string(credentialsId: 'bintray_api_key', variable: 'BINTRAY_APIKEY')]
           ) {
             sh 'mvn versions:set -DnewVersion=1.0.0-${BUILD_NUMBER}'
-            sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy '
+            sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy'
           }
 
           postSuccessfulMetrics("pay-java-commons.maven-build", stepBuildTime)
