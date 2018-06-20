@@ -3,6 +3,8 @@ package uk.gov.pay.commons.testing.pact.consumers;
 import au.com.dius.pact.consumer.PactProviderRuleMk2;
 import au.com.dius.pact.model.FileSource;
 import au.com.dius.pact.model.RequestResponsePact;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.mockserver.socket.PortFactory;
 
 import java.io.File;
@@ -17,21 +19,31 @@ import static java.lang.String.format;
 import static java.util.Arrays.stream;
 
 public class PactProviderRule extends PactProviderRuleMk2 {
-    
+
+    private String methodName;
+
     public PactProviderRule(String provider, Object target) {
         super(provider, "localhost", PortFactory.findFreePort(), target);
     }
 
     @Override
+    public Statement apply(final Statement base, final Description description) {
+        this.methodName = description.getMethodName();
+        return super.apply(base, description);   
+    }
+    
+    @Override
     protected Map<String, RequestResponsePact> getPacts(String fragment) {
         HashMap<String, RequestResponsePact> pacts = new HashMap<>();
         for (Method m : target.getClass().getMethods()) {
-            Optional.ofNullable(m.getAnnotation(Pacts.class)).ifPresent(pactsAnnotation -> stream(pactsAnnotation.pacts()).forEach(fileName -> {
-                if (fileName.contains(provider)) {
-                    RequestResponsePact pact = (RequestResponsePact) loadPact(new FileSource<>(new File(getResource(format("pacts/%s.json", fileName)).getFile())));
-                    pacts.put(provider, pact);
-                }
-            }));
+            if (m.getName().equals(methodName)) {
+                Optional.ofNullable(m.getAnnotation(Pacts.class)).ifPresent(pactsAnnotation -> stream(pactsAnnotation.pacts()).forEach(fileName -> {
+                    if (fileName.contains(provider)) {
+                        RequestResponsePact pact = (RequestResponsePact) loadPact(new FileSource<>(new File(getResource(format("pacts/%s.json", fileName)).getFile())));
+                        pacts.put(provider, pact);
+                    }
+                }));
+            }
         }
         return pacts;
     }
