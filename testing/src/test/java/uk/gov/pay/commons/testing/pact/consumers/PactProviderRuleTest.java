@@ -6,7 +6,9 @@ import org.apache.http.client.fluent.Request;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +21,9 @@ public class PactProviderRuleTest {
     @Rule
     public PactProviderRule weatherService = new PactProviderRule("weather-service", this);
 
+    @Rule
+    public PactProviderRule orderService = new PactProviderRule("order-service", this);
+    
     @Test
     @PactVerification({"stock-quote-service"})
     @Pacts(pacts = {"consumer-stock-quote-service-axp"})
@@ -62,6 +67,17 @@ public class PactProviderRuleTest {
         assertThat(map.get("name")).isEqualTo("London");
         assertThat(map.get("temperature")).isEqualTo("25");
         assertThat(map.get("unit")).isEqualTo("degrees");
+    }
+
+    @Test
+    @PactVerification({"weather-service", "order-service"})
+    @Pacts(pacts = {"consumer-weather-service"})
+    @Pacts(pacts = {"consumer-order-service"}, publish = false)
+    public void specifyIfPactShouldBeWritten() throws IOException {
+        Request.Get(weatherService.getUrl() + "/weather/London").execute();
+        Request.Get(orderService.getUrl() + "/orders").execute();
+        assertThat(new File(Paths.get("", "target", "pacts", "consumer-weather-service.json").toAbsolutePath().toString()).exists()).isTrue();
+        assertThat(new File(Paths.get("", "target", "pacts", "consumer-order-service.json").toAbsolutePath().toString()).exists()).isFalse();
     }
 
     private HashMap jsonToMap(String respBody) throws IOException {
