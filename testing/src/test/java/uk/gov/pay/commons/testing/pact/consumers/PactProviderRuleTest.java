@@ -30,6 +30,16 @@ public class PactProviderRuleTest {
     }
 
     @Test
+    @PactVerification({"stock-quote-service"})
+    @Pacts(pacts = {"consumer-stock-quote-service-v"})
+    public void getVisaPrice() throws Exception {
+        HashMap map = jsonToMap(Request.Get(stockQuoteService.getUrl() + "/stocks/V").execute().returnContent().asString());
+        assertThat(map.get("name")).isEqualTo("Visa");
+        assertThat(map.get("price")).isEqualTo("100.00");
+        assertThat(map.get("currency")).isEqualTo("USD");
+    }
+
+    @Test
     @PactVerification({"weather-service"})
     @Pacts(pacts = {"consumer-weather-service"})
     public void getLondonWeather() throws Exception {
