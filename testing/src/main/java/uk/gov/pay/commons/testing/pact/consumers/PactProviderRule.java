@@ -10,8 +10,11 @@ import org.mockserver.socket.PortFactory;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static au.com.dius.pact.model.PactReader.loadPact;
 import static com.google.common.io.Resources.getResource;
@@ -21,8 +24,6 @@ import static java.util.Arrays.stream;
 public class PactProviderRule extends PactProviderRuleMk2 {
 
     private String methodName;
-
-    
     private List<String> pactsToDelete = new ArrayList<>();
     
     public PactProviderRule(String provider, Object target) {
@@ -50,18 +51,15 @@ public class PactProviderRule extends PactProviderRuleMk2 {
         for (Method m : target.getClass().getMethods()) {
             if (m.getName().equals(methodName)) {
                 Optional.ofNullable(m.getAnnotationsByType(Pacts.class)).ifPresent(pactsAnnotation ->
-                        stream(pactsAnnotation).forEach(p -> {
-                                    stream(p.pacts()).forEach(
-                                            fileName -> {
-                                                if (fileName.contains(provider)) {
-                                                    RequestResponsePact pact = (RequestResponsePact) loadPact(new FileSource<>(new File(getResource(format("pacts/%s.json", fileName)).getFile())));
-                                                    pacts.put(provider, pact);
-                                                }
-                                                if (!p.publish()) pactsToDelete.add(format("%s.json", fileName));
-                                            }
-                                    );
+                        stream(pactsAnnotation).forEach(p -> stream(p.pacts()).forEach(
+                                fileName -> {
+                                    if (fileName.contains(provider)) {
+                                        RequestResponsePact pact = (RequestResponsePact) loadPact(new FileSource<>(new File(getResource(format("pacts/%s.json", fileName)).getFile())));
+                                        pacts.put(provider, pact);
+                                    }
+                                    if (!p.publish()) pactsToDelete.add(format("%s.json", fileName));
                                 }
-                        )
+                        ))
                 );
             }
         }
