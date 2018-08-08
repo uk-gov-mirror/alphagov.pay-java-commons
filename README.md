@@ -14,3 +14,13 @@ To include the testing module, add this to your project's pom.xml:
    <scope>test</scope>
  </dependency>
 ```
+
+To include the utils module, add this to your project's pom.xml:
+                             
+```
+ <dependency>
+   <groupId>uk.gov.pay</groupId>
+   <artifactId>utils</artifactId>
+   <version>1.0.0-{version}</version>
+ </dependency>
+```
