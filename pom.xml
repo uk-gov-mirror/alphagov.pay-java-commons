@@ -21,6 +21,7 @@
 
     <modules>
         <module>testing</module>
+        <module>utils</module>
     </modules>
 
     <dependencies>
