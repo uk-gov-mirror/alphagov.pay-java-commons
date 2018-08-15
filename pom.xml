@@ -9,7 +9,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>GOVUK Pay java common repository</name>
+    <name>GOV.UK Pay Java common repository</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,6 +22,7 @@
     <modules>
         <module>testing</module>
         <module>utils</module>
+        <module>model</module>
     </modules>
 
     <dependencies>
