@@ -61,16 +61,21 @@ public class XRaySessionProfiler implements SessionProfiler {
             logger.warn("Error getting database connection details.");
         }
 
-        Subsegment subsegment = recorder.beginSubsegment(hostname);
-        subsegment.putMetadata("monitor_name", databaseQuery.getMonitorName());
-        subsegment.putMetadata("calling_class", databaseQuery.getClass().getSimpleName());
-        subsegment.setNamespace(Namespace.REMOTE.toString());
-        subsegment.putAllSql(additionalParams);
+        if (recorder.getCurrentSegmentOptional().isPresent()) {
+            Subsegment subsegment = recorder.beginSubsegment(hostname);
+            subsegment.putMetadata("monitor_name", databaseQuery.getMonitorName());
+            subsegment.putMetadata("calling_class", databaseQuery.getClass().getSimpleName());
+            subsegment.setNamespace(Namespace.REMOTE.toString());
+            subsegment.putAllSql(additionalParams);
 
-        try {
+            try {
+                return abstractSession.internalExecuteQuery(databaseQuery, (AbstractRecord) record);
+            } finally {
+                subsegment.end();
+            }
+        } else {
+            logger.info("No segment found, executing query without recording subsegment data.");
             return abstractSession.internalExecuteQuery(databaseQuery, (AbstractRecord) record);
-        } finally {
-            subsegment.end();
         }
     }
 
