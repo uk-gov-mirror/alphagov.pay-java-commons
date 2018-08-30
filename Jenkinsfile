@@ -22,7 +22,7 @@ pipeline {
                     string(credentialsId: 'bintray_username', variable: 'BINTRAY_USERNAME'),
                     string(credentialsId: 'bintray_api_key', variable: 'BINTRAY_APIKEY')]
             ) {
-              sh 'mvn versions:set -DnewVersion=1.0.0-${BUILD_NUMBER}'
+              sh "mvn versions:set -DnewVersion=1.0.0-${gitCommit()}"
               sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy'
             }
           } else {
