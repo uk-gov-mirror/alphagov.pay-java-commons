@@ -8,15 +8,16 @@ import com.amazonaws.xray.strategy.sampling.LocalizedSamplingStrategy;
 import io.dropwizard.setup.Environment;
 
 import java.net.URL;
+import java.util.Optional;
 
 import static java.util.EnumSet.of;
 import static javax.servlet.DispatcherType.REQUEST;
 
 public class Xray {
 
-    public static void init(Environment environment, String xrayServletFilterName, String... urlPatternsForXrayFiltering) {
+    public static void init(Environment environment, String xrayServletFilterName, Optional<URL> samplingRules, String... urlPatternsForXrayFiltering) {
         AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new ECSPlugin());
-        URL ruleFile = Xray.class.getResource("/sampling-rules.json");
+        URL ruleFile = samplingRules.orElse(Xray.class.getResource("/sampling-rules.json"));
         builder.withSamplingStrategy(new LocalizedSamplingStrategy(ruleFile));
         AWSXRay.setGlobalRecorder(builder.build());
 
