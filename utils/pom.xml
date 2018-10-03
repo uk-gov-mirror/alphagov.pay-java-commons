@@ -15,7 +15,7 @@
 
     <properties>
         <dropwizard.version>1.3.5</dropwizard.version>
-        <eclipselink.version>2.6.4</eclipselink.version>
+        <eclipselink.version>2.7.3</eclipselink.version>
     </properties>
 
     <dependencyManagement>
@@ -33,8 +33,9 @@
     <dependencies>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipselink.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>

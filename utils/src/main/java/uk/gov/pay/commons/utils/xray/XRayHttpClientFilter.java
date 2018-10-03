@@ -6,7 +6,6 @@ import com.amazonaws.xray.entities.Namespace;
 import com.amazonaws.xray.entities.Segment;
 import com.amazonaws.xray.entities.Subsegment;
 import com.amazonaws.xray.entities.TraceHeader;
-import org.eclipse.persistence.internal.sessions.AbstractRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
