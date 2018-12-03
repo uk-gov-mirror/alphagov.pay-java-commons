@@ -11,16 +11,15 @@ import org.junit.runners.model.Statement;
 import java.io.IOException;
 
 public class PostgresDockerRule implements TestRule {
-    private PostgresContainer container;
+
+    private static PostgresContainer container;
 
     public PostgresDockerRule() {
         startPostgresIfNecessary();
     }
 
     public String getConnectionUrl() {
-        synchronized(container) {
-            return container.getConnectionUrl();
-        }
+        return container.getConnectionUrl();
     }
 
     @Override
@@ -29,34 +28,26 @@ public class PostgresDockerRule implements TestRule {
     }
 
     private void startPostgresIfNecessary() {
-        synchronized(container) {
-            try {
-                if (container == null) {
-                    container = new PostgresContainer();
-                }
-            } catch (DockerCertificateException | InterruptedException | DockerException | IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+        try {
+            if (container == null) {
+                container = new PostgresContainer();
             }
+        } catch (DockerCertificateException | InterruptedException | DockerException | IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public String getUsername() {
-        synchronized(container) {
-            return container.getUsername();
-        }
+        return container.getUsername();
     }
 
     public String getPassword() {
-        synchronized(container) {
-            return container.getPassword();
-        }
+        return container.getPassword();
     }
 
     public void stop() {
-        synchronized(container) {
-            container.stop();
-            container = null;
-        }
+        container.stop();
+        container = null;
     }
 
     public String getDriverClass() {
