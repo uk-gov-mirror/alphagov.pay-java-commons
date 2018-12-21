@@ -73,7 +73,7 @@ public class PayInteractionRunner extends InteractionRunner {
         httpClient = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
     }
 
-    @Override
+//    @Override
     public void reportVerificationResults(Boolean result) {
         try {
             LOGGER.info("Publishing verification results...");
