@@ -30,21 +30,17 @@ public class XRayHttpClientFilter implements ClientRequestFilter, ClientResponse
 
         if (recorder.getCurrentSegmentOptional().isPresent()) {
             Subsegment subsegment = recorder.beginSubsegment(requestContext.getUri().getHost());
-            try {
-                if (subsegment != null) {
+            if (subsegment != null) {
+                try {
                     subsegment.setNamespace(Namespace.REMOTE.toString());
                     requestContext.getHeaders().add(AWS_TRACE_HEADER, generateTraceHeader(subsegment));
                     HashMap requestInformation = new HashMap();
                     requestInformation.put("url", requestContext.getUri());
                     requestInformation.put("method", requestContext.getMethod());
                     subsegment.putHttp("request", requestInformation);
-                }
-            } catch (Exception exception) {
-                if (subsegment != null) {
+                } catch (Exception exception) {
                     subsegment.addException(exception);
-                }
-            } finally {
-                if (subsegment != null) {
+                } finally {
                     subsegment.end();
                 }
             }
@@ -59,8 +55,8 @@ public class XRayHttpClientFilter implements ClientRequestFilter, ClientResponse
 
         if (recorder.getCurrentSegmentOptional().isPresent()) {
             Subsegment subsegment = recorder.getCurrentSubsegment();
-            try {
-                if (subsegment != null) {
+            if (subsegment != null) {
+                try {
                     int responseCode = responseContext.getStatus();
                     switch (responseCode / 100) {
                         case 4:
@@ -76,13 +72,9 @@ public class XRayHttpClientFilter implements ClientRequestFilter, ClientResponse
                     responseInformation.put("status", Integer.valueOf(responseCode));
                     responseInformation.put("content_length", Long.valueOf(responseContext.getLength()));
                     subsegment.putHttp("response", responseInformation);
-                }
-            } catch (Exception exception) {
-                if (subsegment != null) {
+                } catch (Exception exception) {
                     subsegment.addException(exception);
-                }
-            } finally {
-                if (subsegment != null) {
+                } finally {
                     subsegment.end();
                 }
             }
