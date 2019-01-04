@@ -19,7 +19,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static uk.gov.pay.commons.testing.pact.providers.PactPublishingTest.PACT_BROKER_PORT;
 import static uk.gov.pay.commons.testing.pact.providers.PactPublishingTest.publishVerificationResultsUrl;
 
-public class TestPactRunner extends PactRunner {
+class TestPactRunner extends PactRunner {
 
     public static WireMockServer pactBroker = new WireMockServer(parseInt(PACT_BROKER_PORT));
     
