@@ -22,7 +22,8 @@ pipeline {
                     string(credentialsId: 'bintray_username', variable: 'BINTRAY_USERNAME'),
                     string(credentialsId: 'bintray_api_key', variable: 'BINTRAY_APIKEY')]
             ) {
-              sh "mvn versions:set -DnewVersion=1.0.0-${gitCommit()}"
+              def timestamp = new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone('UTC'))
+              sh "mvn versions:set -DnewVersion=${timestamp}"
               sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy'
             }
           } else {
