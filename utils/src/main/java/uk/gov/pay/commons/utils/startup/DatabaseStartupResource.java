@@ -17,7 +17,7 @@ public class DatabaseStartupResource implements ApplicationStartupDependentResou
     private final String databaseUser;
     private final String databasePassword;
 
-    DatabaseStartupResource(DataSourceFactory dataSourceFactory) {
+    public DatabaseStartupResource(DataSourceFactory dataSourceFactory) {
         databaseUrl = dataSourceFactory.getUrl();
         databaseUser = dataSourceFactory.getUser();
         databasePassword = dataSourceFactory.getPassword();
