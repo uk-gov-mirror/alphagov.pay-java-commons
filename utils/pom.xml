@@ -43,6 +43,11 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jdbi</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-xray-recorder-sdk-core</artifactId>
         </dependency>
@@ -61,6 +66,13 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-xray-recorder-sdk-sql-postgres</artifactId>
+        </dependency>
+        <!-- Test dependencies go below here -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.23.4</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
