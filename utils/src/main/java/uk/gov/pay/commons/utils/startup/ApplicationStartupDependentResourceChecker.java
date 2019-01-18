@@ -14,6 +14,15 @@ public class ApplicationStartupDependentResourceChecker {
     private final ApplicationStartupDependentResource applicationStartupDependentResource;
     private final Consumer<Duration> waiter;
 
+    public ApplicationStartupDependentResourceChecker(ApplicationStartupDependentResource applicationStartupDependentResource) {
+        this(applicationStartupDependentResource, duration -> {
+            try {
+                Thread.sleep(duration.toMillis());
+            } catch (InterruptedException ignored) {
+            }
+        });
+    }
+
     public ApplicationStartupDependentResourceChecker(ApplicationStartupDependentResource applicationStartupDependentResource, Consumer<Duration> waiter) {
         this.applicationStartupDependentResource = applicationStartupDependentResource;
         this.waiter = waiter;
