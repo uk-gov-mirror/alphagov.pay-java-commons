@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
@@ -26,9 +25,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationStartupApplicationStartupDependentResourceCheckerTest {
-
-    @InjectMocks
-    ApplicationStartupDependentResourceChecker applicationStartupDependentResourceChecker;
+    private ApplicationStartupDependentResourceChecker applicationStartupDependentResourceChecker;
 
     @Mock
     DatabaseStartupResource mockApplicationStartupDependentResource;
@@ -44,6 +41,8 @@ public class ApplicationStartupApplicationStartupDependentResourceCheckerTest {
     public void setup() {
         mockAppender = mock(Appender.class);
         ((Logger) LoggerFactory.getLogger(ApplicationStartupDependentResourceChecker.class)).addAppender(mockAppender);
+
+        applicationStartupDependentResourceChecker = new ApplicationStartupDependentResourceChecker(mockApplicationStartupDependentResource, mockWaiter);
     }
 
     @Test
