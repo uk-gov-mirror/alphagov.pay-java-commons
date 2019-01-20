@@ -16,6 +16,10 @@ import java.util.concurrent.TimeUnit;
 public class LoggingFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    /**
+     * This key should match the value in our logging configuration e.g. %X{X-Request-Id:-(none)}
+     */
+    private static final String MDC_REQUEST_ID_KEY = "X-Request-Id";
 
     @Override
     public void init(FilterConfig filterConfig) { }
@@ -27,10 +31,13 @@ public class LoggingFilter implements Filter {
 
         String requestURL = httpRequest.getRequestURI();
         String requestMethod = httpRequest.getMethod();
-        String requestIdHeader = httpRequest.getHeader("X-Request-Id");
+        String requestId = httpRequest.getHeader("X-Request-Id");
 
-        // The key passed to MDC here should match the value in our logging configuration
-        MDC.put("X-Request-Id", requestIdHeader == null ? "(null)" : requestIdHeader);
+        if (requestId == null) {
+            MDC.remove(MDC_REQUEST_ID_KEY);
+        } else {
+            MDC.put(MDC_REQUEST_ID_KEY, requestId);
+        }
 
         logger.info("{} to {} began", requestMethod, requestURL);
         try {

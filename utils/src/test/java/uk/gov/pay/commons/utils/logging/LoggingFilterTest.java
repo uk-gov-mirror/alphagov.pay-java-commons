@@ -24,7 +24,9 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesRegex;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -129,7 +131,7 @@ public class LoggingFilterTest {
 
         when(mockRequest.getHeader("X-Request-Id")).thenReturn(null);
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        assertThat(MDC.get("X-Request-Id"), is("(null)"));
+        assertThat(MDC.get("X-Request-Id"), is(nullValue()));
     }
 
     @SuppressWarnings("unchecked")
