@@ -1,5 +1,6 @@
 package uk.gov.pay.commons.utils.logging;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Stopwatch;
 import org.jboss.logging.MDC;
 import org.slf4j.Logger;
@@ -20,6 +21,16 @@ public class LoggingFilter implements Filter {
      * This key should match the value in our logging configuration e.g. %X{X-Request-Id:-(none)}
      */
     private static final String MDC_REQUEST_ID_KEY = "X-Request-Id";
+
+    private final MetricRegistry metricRegistry;
+
+    public LoggingFilter() {
+        this.metricRegistry = null;
+    }
+
+    public LoggingFilter(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) { }
@@ -45,9 +56,10 @@ public class LoggingFilter implements Filter {
         } catch (Throwable throwable) {
             logger.error("Exception - {}", throwable.getMessage(), throwable);
         } finally {
-            stopwatch.stop();
-            logger.info("{} to {} ended - total time {}ms", requestMethod, requestURL,
-                    stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            long elapsed = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+            logger.info("{} to {} ended - total time {}ms", requestMethod, requestURL, elapsed);
+            if (metricRegistry != null)
+                metricRegistry.histogram("response-times").update(elapsed);
         }
     }
 
