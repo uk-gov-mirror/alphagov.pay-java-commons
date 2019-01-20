@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
+import org.jboss.logging.MDC;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -111,6 +112,24 @@ public class LoggingFilterTest {
         String endLogMessage = loggingEvents.get(2).getFormattedMessage();
         assertThat(endLogMessage, containsString("GET to /publicauth-url-with-exception ended - total time "));
         assertThat(endLogMessage, matchesRegex(".*total time \\d+ms"));
+    }
+
+    @Test
+    public void shouldSetDiagnosticContextPerRequest() {
+        when(mockRequest.getRequestURI()).thenReturn("/publicauth-request");
+        when(mockRequest.getMethod()).thenReturn("GET");
+
+        when(mockRequest.getHeader("X-Request-Id")).thenReturn("some-id");
+        loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+        assertThat(MDC.get("X-Request-Id"), is("some-id"));
+
+        when(mockRequest.getHeader("X-Request-Id")).thenReturn("some-other-id");
+        loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+        assertThat(MDC.get("X-Request-Id"), is("some-other-id"));
+
+        when(mockRequest.getHeader("X-Request-Id")).thenReturn(null);
+        loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+        assertThat(MDC.get("X-Request-Id"), is("(null)"));
     }
 
     @SuppressWarnings("unchecked")
