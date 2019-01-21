@@ -1,5 +1,6 @@
 package uk.gov.pay.commons.utils.logging;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Stopwatch;
 import org.jboss.logging.MDC;
 import org.slf4j.Logger;
@@ -16,6 +17,20 @@ import java.util.concurrent.TimeUnit;
 public class LoggingFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
+    /**
+     * This key should match the value in our logging configuration e.g. %X{X-Request-Id:-(none)}
+     */
+    private static final String MDC_REQUEST_ID_KEY = "X-Request-Id";
+
+    private final MetricRegistry metricRegistry;
+
+    public LoggingFilter() {
+        this.metricRegistry = null;
+    }
+
+    public LoggingFilter(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+    }
 
     @Override
     public void init(FilterConfig filterConfig) { }
@@ -27,10 +42,13 @@ public class LoggingFilter implements Filter {
 
         String requestURL = httpRequest.getRequestURI();
         String requestMethod = httpRequest.getMethod();
-        String requestIdHeader = httpRequest.getHeader("X-Request-Id");
+        String requestId = httpRequest.getHeader("X-Request-Id");
 
-        // The key passed to MDC here should match the value in our logging configuration
-        MDC.put("X-Request-Id", requestIdHeader == null ? "(null)" : requestIdHeader);
+        if (requestId == null) {
+            MDC.remove(MDC_REQUEST_ID_KEY);
+        } else {
+            MDC.put(MDC_REQUEST_ID_KEY, requestId);
+        }
 
         logger.info("{} to {} began", requestMethod, requestURL);
         try {
@@ -38,9 +56,10 @@ public class LoggingFilter implements Filter {
         } catch (Throwable throwable) {
             logger.error("Exception - {}", throwable.getMessage(), throwable);
         } finally {
-            stopwatch.stop();
-            logger.info("{} to {} ended - total time {}ms", requestMethod, requestURL,
-                    stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            long elapsed = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
+            logger.info("{} to {} ended - total time {}ms", requestMethod, requestURL, elapsed);
+            if (metricRegistry != null)
+                metricRegistry.histogram("response-times").update(elapsed);
         }
     }
 
