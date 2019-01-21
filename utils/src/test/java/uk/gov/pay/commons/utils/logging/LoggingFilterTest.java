@@ -60,51 +60,41 @@ public class LoggingFilterTest {
 
     @Test
     public void shouldLogEntryAndExitPointsOfEndPoints() throws Exception {
-        String requestUrl = "/publicauth-request";
-        String requestMethod = "GET";
-
-        when(mockRequest.getRequestURI()).thenReturn(requestUrl);
-        when(mockRequest.getMethod()).thenReturn(requestMethod);
+        when(mockRequest.getRequestURI()).thenReturn("/publicauth-request");
+        when(mockRequest.getMethod()).thenReturn("GET");
 
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
         verify(mockAppender, times(2)).doAppend(loggingEventArgumentCaptor.capture());
         List<LoggingEvent> loggingEvents = loggingEventArgumentCaptor.getAllValues();
 
-        assertThat(loggingEvents.get(0).getFormattedMessage(), is(format("%s to %s began", requestMethod, requestUrl)));
+        assertThat(loggingEvents.get(0).getFormattedMessage(), is("GET to /publicauth-request began"));
         String endLogMessage = loggingEvents.get(1).getFormattedMessage();
-        assertThat(endLogMessage, containsString(format("%s to %s ended - total time ", requestMethod, requestUrl)));
+        assertThat(endLogMessage, containsString("GET to /publicauth-request ended - total time "));
         assertThat(endLogMessage, matchesRegex(".*total time \\d+ms"));
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
     }
 
     @Test
     public void shouldLogEntryAndExitPointsEvenIfRequestIdDoesNotExist() throws Exception {
-
-        String requestUrl = "/publicauth-request";
-        String requestMethod = "GET";
-
-        when(mockRequest.getRequestURI()).thenReturn(requestUrl);
-        when(mockRequest.getMethod()).thenReturn(requestMethod);
+        when(mockRequest.getRequestURI()).thenReturn("/publicauth-request");
+        when(mockRequest.getMethod()).thenReturn("GET");
 
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
         verify(mockAppender, times(2)).doAppend(loggingEventArgumentCaptor.capture());
         List<LoggingEvent> loggingEvents = loggingEventArgumentCaptor.getAllValues();
 
-        assertThat(loggingEvents.get(0).getFormattedMessage(), is(format("%s to %s began", requestMethod, requestUrl)));
+        assertThat(loggingEvents.get(0).getFormattedMessage(), is("GET to /publicauth-request began"));
         String endLogMessage = loggingEvents.get(1).getFormattedMessage();
-        assertThat(endLogMessage, containsString(format("%s to %s ended - total time ", requestMethod, requestUrl)));
+        assertThat(endLogMessage, containsString("GET to /publicauth-request ended - total time "));
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
     }
 
     @Test
     public void shouldLogEntryAndExitPointsEvenWhenFilterChainingThrowsException() throws Exception {
-        String requestUrl = "/publicauth-url-with-exception";
-        String requestMethod = "GET";
-
-        when(mockRequest.getRequestURI()).thenReturn(requestUrl);
-        when(mockRequest.getMethod()).thenReturn(requestMethod);
+        when(mockRequest.getRequestURI()).thenReturn("/publicauth-url-with-exception");
+        when(mockRequest.getMethod()).thenReturn("GET");
 
         IOException exception = new IOException("Failed request");
         doThrow(exception).when(mockFilterChain).doFilter(mockRequest, mockResponse);
@@ -114,12 +104,12 @@ public class LoggingFilterTest {
         verify(mockAppender, times(3)).doAppend(loggingEventArgumentCaptor.capture());
         List<LoggingEvent> loggingEvents = loggingEventArgumentCaptor.getAllValues();
 
-        assertThat(loggingEvents.get(0).getFormattedMessage(), is(format("%s to %s began", requestMethod, requestUrl)));
+        assertThat(loggingEvents.get(0).getFormattedMessage(), is("GET to /publicauth-url-with-exception began"));
         assertThat(loggingEvents.get(1).getFormattedMessage(), is(format("Exception - %s", exception.getMessage())));
         assertThat(loggingEvents.get(1).getLevel(), is(Level.ERROR));
         assertThat(loggingEvents.get(1).getThrowableProxy().getMessage(), is("Failed request"));
         String endLogMessage = loggingEvents.get(2).getFormattedMessage();
-        assertThat(endLogMessage, containsString(format("%s to %s ended - total time ", requestMethod, requestUrl)));
+        assertThat(endLogMessage, containsString("GET to /publicauth-url-with-exception ended - total time "));
         assertThat(endLogMessage, matchesRegex(".*total time \\d+ms"));
     }
 
