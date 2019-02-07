@@ -5,6 +5,7 @@ import com.amazonaws.xray.AWSXRayRecorder;
 import com.amazonaws.xray.entities.Namespace;
 import com.amazonaws.xray.entities.Subsegment;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.internal.databaseaccess.Accessor;
 import org.eclipse.persistence.internal.sessions.AbstractRecord;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.queries.DatabaseQuery;
@@ -37,36 +38,15 @@ public class XRaySessionProfiler implements SessionProfiler {
     @Override
     public Object profileExecutionOfQuery(DatabaseQuery databaseQuery, Record record, AbstractSession abstractSession) {
 
-        HashMap additionalParams = new HashMap();
-        DatabaseMetaData metadata;
-        String hostname = "database";
-        try {
-            Connection connection = abstractSession.getAccessor().getConnection();
-            metadata = connection.getMetaData();
-            additionalParams.put("url", metadata.getURL());
-            additionalParams.put("user", metadata.getUserName());
-            additionalParams.put("driver_version", metadata.getDriverVersion());
-            additionalParams.put("database_type", metadata.getDatabaseProductName());
-            additionalParams.put("database_version", metadata.getDatabaseProductVersion());
-            additionalParams.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
-            additionalParams.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
-
-            try {
-                hostname = new URI((new URI(metadata.getURL())).getSchemeSpecificPart()).getHost();
-                hostname = connection.getCatalog() + "@" + hostname;
-            } catch (URISyntaxException exception) {
-                logger.warn("Error parsing database host name.");
-            }
-        } catch (SQLException exception) {
-            logger.warn("Error getting database connection details.");
-        }
+        HashMap<String, Object> databaseMetadata = new HashMap<>();
+        String hostname = getDatabaseHostnameAndMetadata(databaseQuery, abstractSession, databaseMetadata);
 
         if (recorder.getCurrentSegmentOptional().isPresent()) {
             Subsegment subsegment = recorder.beginSubsegment(hostname);
             subsegment.putMetadata("monitor_name", databaseQuery.getMonitorName());
             subsegment.putMetadata("calling_class", databaseQuery.getClass().getSimpleName());
             subsegment.setNamespace(Namespace.REMOTE.toString());
-            subsegment.putAllSql(additionalParams);
+            subsegment.putAllSql(databaseMetadata);
 
             try {
                 return abstractSession.internalExecuteQuery(databaseQuery, (AbstractRecord) record);
@@ -77,6 +57,51 @@ public class XRaySessionProfiler implements SessionProfiler {
             logger.info("No segment found, executing query without recording subsegment data.");
             return abstractSession.internalExecuteQuery(databaseQuery, (AbstractRecord) record);
         }
+    }
+
+    private String getDatabaseHostnameAndMetadata(DatabaseQuery databaseQuery, AbstractSession abstractSession, HashMap<String, Object> databaseMetadata) {
+        String hostname = "database";
+
+        Accessor accessor = abstractSession.getAccessor();
+        if (accessor == null) {
+            return hostname;
+        }
+        Connection connection = accessor.getConnection();
+        if (connection == null) {
+            return hostname;
+        }
+        updateMetadata(databaseQuery, databaseMetadata, connection);
+
+        return getDatabaseHostName(connection);
+    }
+
+    private void updateMetadata(DatabaseQuery databaseQuery, HashMap<String, Object> databaseMetadata, Connection connection) {
+        try {
+            DatabaseMetaData metadata = connection.getMetaData();
+            databaseMetadata.put("url", metadata.getURL());
+            databaseMetadata.put("user", metadata.getUserName());
+            databaseMetadata.put("driver_version", metadata.getDriverVersion());
+            databaseMetadata.put("database_type", metadata.getDatabaseProductName());
+            databaseMetadata.put("database_version", metadata.getDatabaseProductVersion());
+            databaseMetadata.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
+            databaseMetadata.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
+        } catch (SQLException exception) {
+            logger.warn("Error getting database connection details.");
+        }
+    }
+
+    private String getDatabaseHostName(Connection connection) {
+        String hostname = "database";
+        try {
+            DatabaseMetaData metadata = connection.getMetaData();
+            hostname = new URI((new URI(metadata.getURL())).getSchemeSpecificPart()).getHost();
+            return connection.getCatalog() + "@" + hostname;
+        } catch (URISyntaxException exception) {
+            logger.warn("Error parsing database host name.");
+        } catch (SQLException exception) {
+            logger.warn("Error getting database connection details.");
+        }
+        return hostname;
     }
 
     @Override
