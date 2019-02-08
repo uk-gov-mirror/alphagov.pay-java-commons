@@ -20,7 +20,10 @@ import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class XRaySessionProfiler implements SessionProfiler {
     private int profileWeight = SessionProfiler.ALL;
@@ -37,11 +40,18 @@ public class XRaySessionProfiler implements SessionProfiler {
 
     @Override
     public Object profileExecutionOfQuery(DatabaseQuery databaseQuery, Record record, AbstractSession abstractSession) {
-
-        HashMap<String, Object> databaseMetadata = new HashMap<>();
-        String hostname = getDatabaseHostnameAndMetadata(databaseQuery, abstractSession, databaseMetadata);
-
         if (recorder.getCurrentSegmentOptional().isPresent()) {
+            final Optional<Connection> maybeConnection = Optional.ofNullable(abstractSession.getAccessor()).map(Accessor::getConnection);
+            Map<String, Object> databaseMetadata = new HashMap<>();
+            String hostname = "database";
+            if (maybeConnection.isPresent()) {
+                final Connection connection = maybeConnection.get();
+                databaseMetadata = getMetadata(databaseQuery, connection);
+                hostname = getDatabaseHostName(connection);
+            } else {
+                logger.warn("There is no database connection available");
+            }
+
             Subsegment subsegment = recorder.beginSubsegment(hostname);
             subsegment.putMetadata("monitor_name", databaseQuery.getMonitorName());
             subsegment.putMetadata("calling_class", databaseQuery.getClass().getSimpleName());
@@ -59,24 +69,9 @@ public class XRaySessionProfiler implements SessionProfiler {
         }
     }
 
-    private String getDatabaseHostnameAndMetadata(DatabaseQuery databaseQuery, AbstractSession abstractSession, HashMap<String, Object> databaseMetadata) {
-        String hostname = "database";
-
-        Accessor accessor = abstractSession.getAccessor();
-        if (accessor == null) {
-            return hostname;
-        }
-        Connection connection = accessor.getConnection();
-        if (connection == null) {
-            return hostname;
-        }
-        updateMetadata(databaseQuery, databaseMetadata, connection);
-
-        return getDatabaseHostName(connection);
-    }
-
-    private void updateMetadata(DatabaseQuery databaseQuery, HashMap<String, Object> databaseMetadata, Connection connection) {
+    private Map<String, Object> getMetadata(DatabaseQuery databaseQuery, Connection connection) {
         try {
+            Map<String, Object> databaseMetadata = new HashMap<>();
             DatabaseMetaData metadata = connection.getMetaData();
             databaseMetadata.put("url", metadata.getURL());
             databaseMetadata.put("user", metadata.getUserName());
@@ -85,23 +80,24 @@ public class XRaySessionProfiler implements SessionProfiler {
             databaseMetadata.put("database_version", metadata.getDatabaseProductVersion());
             databaseMetadata.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
             databaseMetadata.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
+            return databaseMetadata;
         } catch (SQLException exception) {
             logger.warn("Error getting database connection details.");
         }
+        return Collections.emptyMap();
     }
 
     private String getDatabaseHostName(Connection connection) {
-        String hostname = "database";
         try {
             DatabaseMetaData metadata = connection.getMetaData();
-            hostname = new URI((new URI(metadata.getURL())).getSchemeSpecificPart()).getHost();
+            String hostname = new URI((new URI(metadata.getURL())).getSchemeSpecificPart()).getHost();
             return connection.getCatalog() + "@" + hostname;
         } catch (URISyntaxException exception) {
             logger.warn("Error parsing database host name.");
         } catch (SQLException exception) {
             logger.warn("Error getting database connection details.");
         }
-        return hostname;
+        return "database";
     }
 
     @Override
