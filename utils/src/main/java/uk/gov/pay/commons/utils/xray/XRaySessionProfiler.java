@@ -47,23 +47,16 @@ public class XRaySessionProfiler implements SessionProfiler {
     @Override
     public Object profileExecutionOfQuery(DatabaseQuery databaseQuery, Record record, AbstractSession abstractSession) {
         if (recorder.getCurrentSegmentOptional().isPresent()) {
-            DatabaseLogin databaseLogin = (DatabaseLogin) abstractSession.getDatasourceLogin();
-            String hostname = "database";
-            Map<String, Object> databaseMetadata = new HashMap<>();
-            if (null != databaseLogin) {
-                hostname = getDatabaseHostName(databaseLogin);
-                databaseMetadata = getMetadata(databaseLogin);
-            } else {
-                logger.warn("No database login available");
-            }
+            Optional<DatabaseLogin> databaseLogin = getDatabaseLogin(abstractSession);
+            String hostname = databaseLogin.map(this::getDatabaseHostName).orElse("database");
 
             Subsegment subsegment = recorder.beginSubsegment(hostname);
             subsegment.putMetadata("monitor_name", databaseQuery.getMonitorName());
             subsegment.putMetadata("calling_class", databaseQuery.getClass().getSimpleName());
             subsegment.setNamespace(Namespace.REMOTE.toString());
 
-            databaseMetadata.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
-            databaseMetadata.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
+            Map<String, Object> databaseMetadata = databaseLogin.map(login -> getQueryMetadataWithLogin(login, databaseQuery))
+                    .orElse(getQueryMetadata(databaseQuery));
             subsegment.putAllSql(databaseMetadata);
 
             try {
@@ -77,19 +70,43 @@ public class XRaySessionProfiler implements SessionProfiler {
         }
     }
 
-    private Map<String, Object> getMetadata(DatabaseLogin datasourceLogin) {
-        Map<String, Object> databaseMetadata = new HashMap<>();
-        databaseMetadata.put("url", datasourceLogin.getURL());
-        databaseMetadata.put("user", datasourceLogin.getUserName());
+    private Optional<DatabaseLogin> getDatabaseLogin(AbstractSession abstractSession) {
+        try {
+            DatabaseLogin datasourceLogin = (DatabaseLogin) abstractSession.getDatasourceLogin();
+            return Optional.ofNullable(datasourceLogin);
+        } catch (ClassCastException e) {
+            logger.warn("Cannot cast to DatabaseLogin [{}]", e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    private Map<String, Object> getQueryMetadataWithLogin(DatabaseLogin databaseLogin, DatabaseQuery databaseQuery) {
+        Map<String, Object> databaseMetadata = getQueryMetadata(databaseQuery);
+        databaseMetadata.putAll(getLoginDetails(databaseLogin));
         return databaseMetadata;
     }
 
-    private String getDatabaseHostName(DatabaseLogin datasourceLogin) {
+    private Map<String, Object> getQueryMetadata(DatabaseQuery databaseQuery) {
+        Map<String, Object> databaseMetadata = new HashMap<>();
+        databaseMetadata.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
+        databaseMetadata.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
+        return databaseMetadata;
+    }
+
+    private Map<String, Object> getLoginDetails(DatabaseLogin databaseLogin) {
+        Map<String, Object> databaseMetadata = new HashMap<>();
+        databaseMetadata.put("url", databaseLogin.getURL());
+        databaseMetadata.put("user", databaseLogin.getUserName());
+        return databaseMetadata;
+    }
+
+    private String getDatabaseHostName(DatabaseLogin databaseLogin) {
         try {
-            final URI dbURI = new URI((new URI(datasourceLogin.getURL())).getSchemeSpecificPart());
+            final URI dbURI = new URI((new URI(databaseLogin.getURL())).getSchemeSpecificPart());
             String hostname = dbURI.getHost();
             final String rawPath = dbURI.getPath();
             String catalogue = rawPath.substring(1);
+
             return catalogue + "@" + hostname;
         } catch (URISyntaxException exception) {
             logger.warn("Error parsing database host name.");

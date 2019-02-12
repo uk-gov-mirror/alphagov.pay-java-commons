@@ -23,11 +23,14 @@ import static junit.framework.TestCase.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class XRaySessionProfilerTest {
     @Captor
     ArgumentCaptor<Map<String, Object>> mapArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<String> urlCaptor;
 
     private DatabaseQuery mockedQuery = mock(DatabaseQuery.class);
     private Record mockedRecord = mock(AbstractRecord.class);
@@ -54,14 +57,13 @@ public class XRaySessionProfilerTest {
 
     @Test
     public void shouldPopulateFieldsForSegment() {
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-
         xrayProfiler.profileExecutionOfQuery(mockedQuery, mockedRecord, mockedSession);
 
-        verify(mockedRecorder).beginSubsegment(argumentCaptor.capture());
+        verify(mockedSession).internalExecuteQuery(mockedQuery, (AbstractRecord) mockedRecord);
+        verify(mockedRecorder).beginSubsegment(urlCaptor.capture());
         verify(mockedSubSegment).putAllSql(mapArgumentCaptor.capture());
 
-        String actualURI = argumentCaptor.getValue();
+        String actualURI = urlCaptor.getValue();
 
         assertEquals("connector_tests@localhost", actualURI);
 
@@ -73,19 +75,18 @@ public class XRaySessionProfilerTest {
 
         assertEquals(SessionProfiler.ALL, xrayProfiler.getProfileWeight());
     }
-    
-    @Test
-    public void shouldNotPopulateFieldsWhenNullDatabaseLogin() {
-        when(mockedSession.getDatasourceLogin()).thenReturn(null);
 
-        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+    @Test
+    public void shouldNotPopulateFieldsWhenNullDatabaseLoginButValidSegment() {
+        when(mockedSession.getDatasourceLogin()).thenReturn(null);
 
         xrayProfiler.profileExecutionOfQuery(mockedQuery, mockedRecord, mockedSession);
 
-        verify(mockedRecorder).beginSubsegment(argumentCaptor.capture());
+        verify(mockedSession).internalExecuteQuery(mockedQuery, (AbstractRecord) mockedRecord);
+        verify(mockedRecorder).beginSubsegment(urlCaptor.capture());
         verify(mockedSubSegment).putAllSql(mapArgumentCaptor.capture());
 
-        String actualURI = argumentCaptor.getValue();
+        String actualURI = urlCaptor.getValue();
 
         assertEquals("database", actualURI);
 
@@ -97,5 +98,16 @@ public class XRaySessionProfilerTest {
         assertEquals("SELECT 1", actualSQLMap.get("sanitized_query"));
 
         assertEquals(SessionProfiler.ALL, xrayProfiler.getProfileWeight());
+    }
+
+    @Test
+    public void shouldRunTheQueryWhenNoSegmentAvailable() {
+        when(mockedRecorder.getCurrentSegmentOptional()).thenReturn(Optional.empty());
+
+        xrayProfiler.profileExecutionOfQuery(mockedQuery, mockedRecord, mockedSession);
+
+        verify(mockedSession).internalExecuteQuery(mockedQuery, (AbstractRecord) mockedRecord);
+        verify(mockedRecorder).getCurrentSegmentOptional();
+        verifyNoMoreInteractions(mockedRecorder);
     }
 }
