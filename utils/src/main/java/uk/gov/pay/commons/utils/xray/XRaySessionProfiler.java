@@ -5,10 +5,10 @@ import com.amazonaws.xray.AWSXRayRecorder;
 import com.amazonaws.xray.entities.Namespace;
 import com.amazonaws.xray.entities.Subsegment;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.persistence.internal.databaseaccess.Accessor;
 import org.eclipse.persistence.internal.sessions.AbstractRecord;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.queries.DatabaseQuery;
+import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Record;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.SessionProfiler;
@@ -17,18 +17,24 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class XRaySessionProfiler implements SessionProfiler {
-    private int profileWeight = SessionProfiler.ALL;
     private static final Logger logger = LoggerFactory.getLogger(XRaySessionProfiler.class);
-    private final AWSXRayRecorder recorder = AWSXRay.getGlobalRecorder();
+    private int profileWeight = SessionProfiler.ALL;
+    private final AWSXRayRecorder recorder;
+
+    // Required by EclipseLink
+    public XRaySessionProfiler() {
+        this.recorder = AWSXRay.getGlobalRecorder();
+    }
+
+    // Used for testing
+    XRaySessionProfiler(AWSXRayRecorder recorder) {
+        this.recorder = recorder;
+    }
 
     @Override
     public void endOperationProfile(String operationName) {
@@ -41,21 +47,16 @@ public class XRaySessionProfiler implements SessionProfiler {
     @Override
     public Object profileExecutionOfQuery(DatabaseQuery databaseQuery, Record record, AbstractSession abstractSession) {
         if (recorder.getCurrentSegmentOptional().isPresent()) {
-            final Optional<Connection> maybeConnection = Optional.ofNullable(abstractSession.getAccessor()).map(Accessor::getConnection);
-            Map<String, Object> databaseMetadata = new HashMap<>();
-            String hostname = "database";
-            if (maybeConnection.isPresent()) {
-                final Connection connection = maybeConnection.get();
-                databaseMetadata = getMetadata(databaseQuery, connection);
-                hostname = getDatabaseHostName(connection);
-            } else {
-                logger.warn("There is no database connection available");
-            }
+            Optional<DatabaseLogin> databaseLogin = getDatabaseLogin(abstractSession);
+            String hostname = databaseLogin.map(this::getDatabaseHostName).orElse("database");
 
             Subsegment subsegment = recorder.beginSubsegment(hostname);
             subsegment.putMetadata("monitor_name", databaseQuery.getMonitorName());
             subsegment.putMetadata("calling_class", databaseQuery.getClass().getSimpleName());
             subsegment.setNamespace(Namespace.REMOTE.toString());
+
+            Map<String, Object> databaseMetadata = databaseLogin.map(login -> getQueryMetadataWithLogin(login, databaseQuery))
+                    .orElse(getQueryMetadata(databaseQuery));
             subsegment.putAllSql(databaseMetadata);
 
             try {
@@ -69,33 +70,46 @@ public class XRaySessionProfiler implements SessionProfiler {
         }
     }
 
-    private Map<String, Object> getMetadata(DatabaseQuery databaseQuery, Connection connection) {
+    private Optional<DatabaseLogin> getDatabaseLogin(AbstractSession abstractSession) {
         try {
-            Map<String, Object> databaseMetadata = new HashMap<>();
-            DatabaseMetaData metadata = connection.getMetaData();
-            databaseMetadata.put("url", metadata.getURL());
-            databaseMetadata.put("user", metadata.getUserName());
-            databaseMetadata.put("driver_version", metadata.getDriverVersion());
-            databaseMetadata.put("database_type", metadata.getDatabaseProductName());
-            databaseMetadata.put("database_version", metadata.getDatabaseProductVersion());
-            databaseMetadata.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
-            databaseMetadata.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
-            return databaseMetadata;
-        } catch (SQLException exception) {
-            logger.warn("Error getting database connection details.");
+            DatabaseLogin datasourceLogin = (DatabaseLogin) abstractSession.getDatasourceLogin();
+            return Optional.ofNullable(datasourceLogin);
+        } catch (ClassCastException e) {
+            logger.warn("Cannot cast to DatabaseLogin [{}]", e.getMessage());
+            return Optional.empty();
         }
-        return Collections.emptyMap();
     }
 
-    private String getDatabaseHostName(Connection connection) {
+    private Map<String, Object> getQueryMetadataWithLogin(DatabaseLogin databaseLogin, DatabaseQuery databaseQuery) {
+        Map<String, Object> databaseMetadata = getQueryMetadata(databaseQuery);
+        databaseMetadata.putAll(getLoginDetails(databaseLogin));
+        return databaseMetadata;
+    }
+
+    private Map<String, Object> getQueryMetadata(DatabaseQuery databaseQuery) {
+        Map<String, Object> databaseMetadata = new HashMap<>();
+        databaseMetadata.put("preparation", databaseQuery.isCallQuery() ? "call" : "statement");
+        databaseMetadata.put("sanitized_query", StringUtils.isEmpty(databaseQuery.getSQLString()) ? "" : databaseQuery.getSQLString());
+        return databaseMetadata;
+    }
+
+    private Map<String, Object> getLoginDetails(DatabaseLogin databaseLogin) {
+        Map<String, Object> databaseMetadata = new HashMap<>();
+        databaseMetadata.put("url", databaseLogin.getURL());
+        databaseMetadata.put("user", databaseLogin.getUserName());
+        return databaseMetadata;
+    }
+
+    private String getDatabaseHostName(DatabaseLogin databaseLogin) {
         try {
-            DatabaseMetaData metadata = connection.getMetaData();
-            String hostname = new URI((new URI(metadata.getURL())).getSchemeSpecificPart()).getHost();
-            return connection.getCatalog() + "@" + hostname;
+            final URI dbURI = new URI((new URI(databaseLogin.getURL())).getSchemeSpecificPart());
+            String hostname = dbURI.getHost();
+            final String rawPath = dbURI.getPath();
+            String catalogue = rawPath.substring(1);
+
+            return catalogue + "@" + hostname;
         } catch (URISyntaxException exception) {
             logger.warn("Error parsing database host name.");
-        } catch (SQLException exception) {
-            logger.warn("Error getting database connection details.");
         }
         return "database";
     }
