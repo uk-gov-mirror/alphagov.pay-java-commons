@@ -59,7 +59,7 @@ public class PostgresContainer {
     }
 
     public PostgresContainer() throws InterruptedException, IOException, ClassNotFoundException, DockerCertificateException, DockerException {
-        this(DefaultDockerClient.fromEnv().build(), "govukpay/postgres:9.6.6", "postgres", "mysecretpassword");
+        this(DefaultDockerClient.fromEnv().build(), "govukpay/postgres:9.6.11", "postgres", "mysecretpassword");
     }
 
     public String getUsername() {
