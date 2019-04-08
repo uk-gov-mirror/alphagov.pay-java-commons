@@ -12,6 +12,10 @@ pipeline {
     lib("pay-jenkins-library@master")
   }
 
+  environment {
+    JAVA_HOME="/usr/lib/jvm/java-1.11.0-openjdk-amd64"
+  }
+
   stages {
     stage('Maven Build') {
       steps {
@@ -27,6 +31,7 @@ pipeline {
               sh 'mvn --settings settings.xml -Dbintray.username=${BINTRAY_USERNAME} -Dbintray.apiKey=${BINTRAY_APIKEY} deploy'
             }
           } else {
+            sh 'mvn -version'
             sh 'mvn clean install'
           }
           postSuccessfulMetrics("pay-java-commons.maven-build", stepBuildTime)
