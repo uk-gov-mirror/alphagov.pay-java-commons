@@ -15,7 +15,7 @@
 
     <properties>
         <docker-client.version>8.15.2</docker-client.version>
-        <pact.version>3.6.4</pact.version>
+        <pact.version>3.6.5</pact.version>
         <mockserver.version>5.5.1</mockserver.version>
     </properties>
 
