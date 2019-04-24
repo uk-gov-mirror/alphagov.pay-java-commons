@@ -1,5 +1,6 @@
 package uk.gov.pay.commons.api.json;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.Before;
@@ -8,6 +9,10 @@ import uk.gov.pay.commons.model.charge.ExternalMetadata;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ExternalMetadataDeserialiserTest {
 
@@ -29,5 +34,16 @@ public class ExternalMetadataDeserialiserTest {
         assertEquals(externalMetadata.getMetadata().size(), 2);
         assertEquals(externalMetadata.getMetadata().get("ledger_code"), "123");
         assertEquals(externalMetadata.getMetadata().get("fund_code"), "1234");
+    }
+
+    @Test
+    public void shouldReturnErrorIfValueIsNotAnObject() throws Exception {
+        String metadata = "some text";
+        try {
+            objectMapper.convertValue(metadata, ExternalMetadata.class);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), containsString("Field [metadata] must be an object of JSON key-value pairs"));
+        }
     }
 }

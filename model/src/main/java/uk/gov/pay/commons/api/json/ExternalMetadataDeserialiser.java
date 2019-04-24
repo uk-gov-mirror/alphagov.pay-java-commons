@@ -14,6 +14,10 @@ public class ExternalMetadataDeserialiser extends JsonDeserializer<ExternalMetad
 
     @Override
     public ExternalMetadata deserialize(final JsonParser jsonParser, final DeserializationContext ctxt) throws IOException {
+        if (!jsonParser.isExpectedStartObjectToken()){
+            throw new JsonMappingException(jsonParser, "Field [metadata] must be an object of JSON key-value pairs");
+        }
+
         Map<String, Object> metadata = jsonParser.getCodec().readValue(jsonParser, new TypeReference<Map<String, Object>>() {});
         if (metadata != null) {
             return new ExternalMetadata(metadata);
