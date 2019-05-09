@@ -20,7 +20,7 @@ public class ExternalMetadataDeserialiser extends JsonDeserializer<ExternalMetad
 
         Map<String, Object> metadata = jsonParser.getCodec().readValue(jsonParser, new TypeReference<Map<String, Object>>() {});
         if (metadata != null) {
-            return new ExternalMetadata(metadata);
+            return metadata.isEmpty() ? null : new ExternalMetadata(metadata);
         }
 
         assert false : "This should never be invoked since we currently do no deserialize null values.";
