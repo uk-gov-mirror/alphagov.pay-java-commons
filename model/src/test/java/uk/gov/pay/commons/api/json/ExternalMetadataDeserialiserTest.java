@@ -1,6 +1,5 @@
 package uk.gov.pay.commons.api.json;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.Before;
@@ -9,9 +8,9 @@ import uk.gov.pay.commons.model.charge.ExternalMetadata;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ExternalMetadataDeserialiserTest {
@@ -27,6 +26,12 @@ public class ExternalMetadataDeserialiserTest {
     }
     
     @Test
+    public void shouldReturnNullIfValueIsAnEmptyJson() throws Exception {
+        ExternalMetadata externalMetadata = objectMapper.readValue("{}", ExternalMetadata.class);
+        assertNull(externalMetadata);
+    }
+    
+    @Test
     public void shouldDeserialise() throws Exception {
         String metadata = "{\"ledger_code\":\"123\", \"fund_code\":\"1234\"}";
         ExternalMetadata externalMetadata = objectMapper.readValue(metadata, ExternalMetadata.class);
@@ -37,7 +42,7 @@ public class ExternalMetadataDeserialiserTest {
     }
 
     @Test
-    public void shouldReturnErrorIfValueIsNotAnObject() throws Exception {
+    public void shouldReturnErrorIfValueIsNotAnObject() {
         String metadata = "some text";
         try {
             objectMapper.convertValue(metadata, ExternalMetadata.class);
