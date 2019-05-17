@@ -5,7 +5,6 @@ import au.com.dius.pact.model.FileSource;
 import au.com.dius.pact.model.RequestResponsePact;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.mockserver.socket.PortFactory;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -20,6 +19,7 @@ import static au.com.dius.pact.model.PactReader.loadPact;
 import static com.google.common.io.Resources.getResource;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
+import static uk.gov.pay.commons.testing.port.PortFactory.findFreePort;
 
 public class PactProviderRule extends PactProviderRuleMk2 {
 
@@ -27,7 +27,7 @@ public class PactProviderRule extends PactProviderRuleMk2 {
     private List<String> pactsToDelete = new ArrayList<>();
     
     public PactProviderRule(String provider, Object target) {
-        super(provider, "localhost", PortFactory.findFreePort(), target);
+        super(provider, "localhost", findFreePort(), target);
     }
 
     @Override

@@ -16,20 +16,9 @@
     <properties>
         <docker-client.version>8.15.3</docker-client.version>
         <pact.version>3.6.7</pact.version>
-        <mockserver.version>5.5.4</mockserver.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-netty</artifactId>
-            <version>${mockserver.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-client-java</artifactId>
-            <version>${mockserver.version}</version>
-        </dependency>
         <dependency>
             <groupId>au.com.dius</groupId>
             <artifactId>pact-jvm-provider-junit_2.12</artifactId>
