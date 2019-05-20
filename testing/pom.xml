@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <docker-client.version>8.15.3</docker-client.version>
+        <docker-client.version>8.16.0</docker-client.version>
         <pact.version>3.6.7</pact.version>
     </properties>
 
