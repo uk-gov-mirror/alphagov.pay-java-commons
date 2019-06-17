@@ -16,9 +16,15 @@
     <properties>
         <docker-client.version>8.16.0</docker-client.version>
         <pact.version>3.6.7</pact.version>
+        <hamcrest.version>2.1</hamcrest.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest.version}</version>
+        </dependency>
         <dependency>
             <groupId>au.com.dius</groupId>
             <artifactId>pact-jvm-provider-junit_2.12</artifactId>
