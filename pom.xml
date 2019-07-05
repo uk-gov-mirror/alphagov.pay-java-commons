@@ -26,6 +26,7 @@
         <module>testing</module>
         <module>utils</module>
         <module>model</module>
+        <module>validation</module>
     </modules>
 
     <dependencies>
