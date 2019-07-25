@@ -35,11 +35,18 @@ public class DatabaseMetricsService {
             new PostgresCounterMetric("blk_write_time_ns", 0L));
 
     private final String databaseName;
-    private final DataSourceFactory dataSourceFactory;
+    private final JDBCConnectionProvider jdbcConnectionProvider;
     private Integer statsHealthy = 0;
 
     public DatabaseMetricsService(DataSourceFactory dataSourceFactory, MetricRegistry metricRegistry, String databaseName) {
-        this.dataSourceFactory = dataSourceFactory;
+        this.jdbcConnectionProvider = new JDBCConnectionFactory(dataSourceFactory);
+        this.databaseName = databaseName;
+        metrics.forEach(metric -> metric.register(metricRegistry, format("%sdb.", databaseName)));
+        metricRegistry.<Gauge<Integer>>register(format("%sdb.stats_healthy", databaseName), () -> statsHealthy);
+    }
+
+    DatabaseMetricsService(JDBCConnectionProvider jdbcConnectionProvider, MetricRegistry metricRegistry, String databaseName) {
+        this.jdbcConnectionProvider = jdbcConnectionProvider;
         this.databaseName = databaseName;
         metrics.forEach(metric -> metric.register(metricRegistry, format("%sdb.", databaseName)));
         metricRegistry.<Gauge<Integer>>register(format("%sdb.stats_healthy", databaseName), () -> statsHealthy);
@@ -50,10 +57,7 @@ public class DatabaseMetricsService {
     }
 
     private boolean fetchDatabaseMetrics() {
-        try (Connection connection = DriverManager.getConnection(
-                dataSourceFactory.getUrl(),
-                dataSourceFactory.getUser(),
-                dataSourceFactory.getPassword());
+        try (Connection connection = jdbcConnectionProvider.getConnection();
              PreparedStatement statement = connection.prepareStatement("select *, blk_read_time * 1000 as blk_read_time_ns, blk_write_time * 1000 as blk_write_time_ns from pg_stat_database where datname = ?")) {
             connection.setReadOnly(true);
             statement.setString(1, databaseName);
@@ -79,7 +83,7 @@ public class DatabaseMetricsService {
         void setValue(Long value);
     }
 
-    private class PostgresGaugeMetric implements PostgresMetric,Gauge<Long> {
+    class PostgresGaugeMetric implements PostgresMetric,Gauge<Long> {
         final String name;
         Long value;
 
@@ -108,7 +112,7 @@ public class DatabaseMetricsService {
         }
     }
 
-    private class PostgresCounterMetric extends Counter implements PostgresMetric {
+    class PostgresCounterMetric extends Counter implements PostgresMetric {
         final String name;
         Long value;
 
@@ -136,5 +140,22 @@ public class DatabaseMetricsService {
         public void setValue(Long value) {
             this.value = value;
         }
+    }
+
+    private class JDBCConnectionFactory implements JDBCConnectionProvider {
+        private DataSourceFactory dataSourceFactory;
+
+        JDBCConnectionFactory(DataSourceFactory dataSourceFactory) {
+            this.dataSourceFactory = dataSourceFactory;
+        }
+
+        @Override
+        public Connection getConnection() throws SQLException {
+            return DriverManager.getConnection(dataSourceFactory.getUrl(), dataSourceFactory.getUser(), dataSourceFactory.getPassword());
+        }
+    }
+
+    interface JDBCConnectionProvider {
+        Connection getConnection() throws SQLException;
     }
 }
