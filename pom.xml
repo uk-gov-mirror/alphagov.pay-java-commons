@@ -27,6 +27,7 @@
         <module>utils</module>
         <module>model</module>
         <module>validation</module>
+        <module>logging</module>
     </modules>
 
     <dependencies>
