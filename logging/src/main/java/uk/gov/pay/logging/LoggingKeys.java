@@ -1,5 +1,9 @@
 package uk.gov.pay.logging;
 
+/**
+ * This file needs to be kept in sync with its Node.js consociate
+ * @see <a href="https://github.com/alphagov/pay-js-commons/blob/master/src/logging-keys/index.js">https://github.com/alphagov/pay-js-commons/blob/master/src/logging-keys/index.js</a>
+ */
 public interface LoggingKeys {
 
     /**
