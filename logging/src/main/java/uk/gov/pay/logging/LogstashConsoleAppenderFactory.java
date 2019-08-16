@@ -1,4 +1,4 @@
-package uk.gov.pay.commons.utils.logging;
+package uk.gov.pay.logging;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.filter.ThresholdFilter;
