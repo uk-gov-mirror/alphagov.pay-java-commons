@@ -2,6 +2,10 @@ version: 1
 
 update_configs:
   - package_manager: "java:maven"
+    default_labels:
+      - "dependencies"
+      - "govuk-pay"
+      - "java"
     directory: "/"
     update_schedule: "weekly"
     allowed_updates:
