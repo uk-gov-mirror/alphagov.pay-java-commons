@@ -25,7 +25,13 @@ public class CreateTestSuiteTest {
     }
     
     @Test
-    public void addSpecificContractTest() {
+    public void addContractTestsForConsumer1() {
+        System.setProperty("CONSUMER", "consumer1");
+        assertThat(CreateTestSuite.create(consumerToJUnitTest).countTestCases()).isEqualTo(2);
+    }
+
+    @Test
+    public void addContractTestsForConsumer2() {
         System.setProperty("CONSUMER", "consumer2");
         assertThat(CreateTestSuite.create(consumerToJUnitTest).countTestCases()).isEqualTo(1);
     }
