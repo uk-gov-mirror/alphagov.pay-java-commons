@@ -7,14 +7,19 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.Encoder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.gson.Gson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 import net.logstash.logback.encoder.LogstashEncoder;
 
+import java.util.Map;
+
 @JsonTypeName("logstash-console")
 public class LogstashConsoleAppenderFactory extends ConsoleAppenderFactory<ILoggingEvent> {
+
+    private Map<String, String> customFields;
 
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context,
@@ -23,7 +28,8 @@ public class LogstashConsoleAppenderFactory extends ConsoleAppenderFactory<ILogg
                                          LevelFilterFactory<ILoggingEvent> levelFilterFactory,
                                          AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
 
-        Encoder<ILoggingEvent> encoder = new LogstashEncoder();
+        LogstashEncoder encoder = new LogstashEncoder();
+        encoder.setCustomFields(new Gson().toJson(customFields));
         encoder.setContext(context);
         encoder.start();
 
@@ -39,5 +45,13 @@ public class LogstashConsoleAppenderFactory extends ConsoleAppenderFactory<ILogg
         appender.start();
 
         return wrapAsync(appender, asyncAppenderFactory);
+    }
+
+    public Map<String, String> getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(Map<String, String> customFields) {
+        this.customFields = customFields;
     }
 }
