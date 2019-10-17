@@ -20,7 +20,7 @@ public class LoggingFilter implements Filter {
     /**
      * This key should match the value in our logging configuration e.g. %X{X-Request-Id:-(none)}
      */
-    private static final String MDC_REQUEST_ID_KEY = "X-Request-Id";
+    private static final String MDC_REQUEST_ID_KEY = "x_request_id";
 
     private final MetricRegistry metricRegistry;
 

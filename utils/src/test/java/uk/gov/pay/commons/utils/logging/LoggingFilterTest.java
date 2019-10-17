@@ -123,15 +123,15 @@ public class LoggingFilterTest {
 
         when(mockRequest.getHeader("X-Request-Id")).thenReturn("some-id");
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        assertThat(MDC.get("X-Request-Id"), is("some-id"));
+        assertThat(MDC.get("x_request_id"), is("some-id"));
 
         when(mockRequest.getHeader("X-Request-Id")).thenReturn("some-other-id");
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        assertThat(MDC.get("X-Request-Id"), is("some-other-id"));
+        assertThat(MDC.get("x_request_id"), is("some-other-id"));
 
         when(mockRequest.getHeader("X-Request-Id")).thenReturn(null);
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        assertThat(MDC.get("X-Request-Id"), is(nullValue()));
+        assertThat(MDC.get("x_request_id"), is(nullValue()));
     }
 
     @SuppressWarnings("unchecked")
