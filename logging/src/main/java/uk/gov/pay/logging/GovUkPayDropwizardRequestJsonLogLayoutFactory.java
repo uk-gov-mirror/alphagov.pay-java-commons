@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 /**
- * This programmatically configures the JSON logging to be equivalent to:
+ * This programmatically configures the dropwizard request log json logging to be equivalent to:
  *
  *       - type: console
  *         layout:
@@ -31,10 +31,11 @@ import java.util.TimeZone;
  *           additionalFields:
  *             "@version": 1
  *             
- * More additional fields can be added as required.
+ * More additional fields can be added as required; however it is mandatory to add a "container" key as this is 
+ * standard across all our dropwizard apps.
  */
 @JsonTypeName("govuk-pay-access-json")
-public class GovUkPayAccessJsonLayoutFactory extends AccessJsonLayoutBaseFactory {
+public class GovUkPayDropwizardRequestJsonLogLayoutFactory extends AccessJsonLayoutBaseFactory {
 
     private static final Map<String, String> CUSTOM_FIELD_NAMES = Map.of(
             "timestamp", "@timestamp",
@@ -51,6 +52,10 @@ public class GovUkPayAccessJsonLayoutFactory extends AccessJsonLayoutBaseFactory
 
     @Override
     public LayoutBase<IAccessEvent> build(LoggerContext context, TimeZone timeZone) {
+        if (!this.getAdditionalFields().containsKey("container")) {
+            throw new RuntimeException("When using govuk-pay-access-json, an additional field with the key of " +
+                    "\"container\" must be present");
+        }
         var additionalFields = new HashMap<>(this.getAdditionalFields());
         additionalFields.put("@version", 1);
         var jsonLayout = new AccessJsonLayout(this.createDropwizardJsonFormatter(), createTimestampFormatter(timeZone),
