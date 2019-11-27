@@ -144,4 +144,14 @@ public interface LoggingKeys {
      */
     String PAYMENT_EXTERNAL_ID = "payment_external_id";
 
+    /**
+     * Refund External Id
+     */
+    String REFUND_EXTERNAL_ID = "refund_external_id";
+
+    /**
+     * Secure Token
+     */
+    String SECURE_TOKEN = "secure_token";
+
 }
