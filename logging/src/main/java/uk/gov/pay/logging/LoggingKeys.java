@@ -139,4 +139,9 @@ public interface LoggingKeys {
      */
     String AWS_ERROR_CODE = "aws_error_code";
 
+    /**
+     * Payment External Id
+     */
+    String PAYMENT_EXTERNAL_ID = "payment_external_id";
+
 }
