@@ -1,8 +1,8 @@
-package uk.gov.pay.commons.utils.logging;
+package uk.gov.pay.logging;
 
 import com.codahale.metrics.MetricRegistry;
 import jersey.repackaged.com.google.common.base.Stopwatch;
-import org.jboss.logging.MDC;
+import org.slf4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,13 +14,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 
+import static uk.gov.pay.logging.LoggingKeys.MDC_REQUEST_ID_KEY;
+
 public class LoggingFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingFilter.class);
-    /**
-     * This key should match the value in our logging configuration e.g. %X{X-Request-Id:-(none)}
-     */
-    private static final String MDC_REQUEST_ID_KEY = "x_request_id";
 
     private final MetricRegistry metricRegistry;
 
