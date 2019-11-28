@@ -1,8 +1,8 @@
-package uk.gov.pay.commons.utils.logging;
+package uk.gov.pay.logging;
 
 import com.codahale.metrics.MetricRegistry;
 import jersey.repackaged.com.google.common.base.Stopwatch;
-import org.jboss.logging.MDC;
+import org.slf4j.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
