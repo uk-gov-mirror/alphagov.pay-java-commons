@@ -154,4 +154,9 @@ public interface LoggingKeys {
      */
     String SECURE_TOKEN = "secure_token";
 
+    /**
+     * Logging key that maps to the http X-Request-Id header
+     */
+    String MDC_REQUEST_ID_KEY = "x_request_id";
+
 }
