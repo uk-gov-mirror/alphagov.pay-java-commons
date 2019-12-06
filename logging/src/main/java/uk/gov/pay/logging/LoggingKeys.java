@@ -48,9 +48,9 @@ public interface LoggingKeys {
     String AMOUNT = "amount";
  
     /**
-     * The ID GOV.UK Pay gives to a payment, mandate, refund etc.
+     * Mandate external id
      */
-    String EXTERNAL_ID = "external_id";
+    String MANDATE_EXTERNAL_ID = "external_id";
 
     /**
      * The ID a provider gives to a payment, mandate, refund etc.
