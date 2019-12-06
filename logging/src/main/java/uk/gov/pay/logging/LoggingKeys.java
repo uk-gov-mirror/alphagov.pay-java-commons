@@ -159,4 +159,14 @@ public interface LoggingKeys {
      */
     String MDC_REQUEST_ID_KEY = "x_request_id";
 
+    /**
+     * User external id
+     */
+    String USER_EXTERNAL_ID = "user_external_id";
+
+    /**
+     * A service's external id
+     */
+    String SERVICE_EXTERNAL_ID = "service_external_id";
+
 }
