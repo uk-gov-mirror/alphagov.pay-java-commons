@@ -53,9 +53,9 @@ public interface LoggingKeys {
     String MANDATE_EXTERNAL_ID = "external_id";
 
     /**
-     * The ID a provider gives to a payment, mandate, refund etc.
+     * The PSP's identifier for a payment
      */
-    String PROVIDER_ID = "provider_id";
+    String PROVIDER_PAYMENT_ID = "provider_payment_id";
 
     /**
      * The ID a provider gives to an event (e.g. one in a notification)
