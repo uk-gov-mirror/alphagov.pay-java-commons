@@ -50,7 +50,7 @@ public interface LoggingKeys {
     /**
      * Mandate external id
      */
-    String MANDATE_EXTERNAL_ID = "external_id";
+    String MANDATE_EXTERNAL_ID = "mandate_external_id";
 
     /**
      * The PSP's identifier for a payment
