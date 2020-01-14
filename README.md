@@ -1,5 +1,7 @@
 # pay-java-commons
 
+[ ![Download](https://api.bintray.com/packages/govuk-pay/pay-java-commons/pay-java-commons/images/download.svg) ](https://bintray.com/govuk-pay/pay-java-commons/pay-java-commons/_latestVersion)
+
 This project contains common code for use across GOV.UK Pay's Java projects. 
 Modules under this project are published to [bintray](https://bintray.com/govuk-pay/pay-java-commons/pay-java-commons/).
 The latest version numbers can be found there. 
