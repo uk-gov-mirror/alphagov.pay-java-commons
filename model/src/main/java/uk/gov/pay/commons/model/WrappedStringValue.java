@@ -22,7 +22,7 @@ public abstract class WrappedStringValue {
         }
 
         if (that != null && this.getClass() == that.getClass()) {
-            WrappedStringValue wrappedStringValueWithSameRuntimeTypeAsThisObject = (WrappedStringValue) that;
+            var wrappedStringValueWithSameRuntimeTypeAsThisObject = (WrappedStringValue) that;
             return this.value.equals(wrappedStringValueWithSameRuntimeTypeAsThisObject.value);
         }
 
