@@ -138,4 +138,16 @@ public class ExternalMetadataTest {
         assertThat(expectedErrorMessages.contains(violations.iterator().next().getMessage()), is(true));
         assertThat(expectedErrorMessages.contains(violations.iterator().next().getMessage()), is(true));
     }
+
+    @Test
+    public void shouldFailWithDuplicateCaseInsensitiveKEysViolations() {
+        Map<String, Object> metadata = Map.of(
+                "key", "string",
+                "Key", 1L
+        );
+        ExternalMetadata invalidExternalMetadata = new ExternalMetadata(metadata);
+        Set<ConstraintViolation<ExternalMetadata>> violations = validator.validate(invalidExternalMetadata);
+        assertThat(violations.size(), is(1));
+        assertThat(violations.iterator().next().getMessage(), is("Field [metadata] must have case insensitive unique keys"));
+    }
 }
