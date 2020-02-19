@@ -169,4 +169,9 @@ public interface LoggingKeys {
      */
     String SERVICE_EXTERNAL_ID = "service_external_id";
 
+    /**
+     * The error returned by a payment gateway.
+     */
+    String GATEWAY_ERROR = "gateway_error";
+
 }
