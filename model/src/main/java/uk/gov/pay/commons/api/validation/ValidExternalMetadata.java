@@ -20,6 +20,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @MapValueTypes(types = {String.class, Number.class, Boolean.class}, message = "Field [metadata] values must be of type String, Boolean or Number")
 @MapValueLength(max = 50, message = "Field [metadata] values must be no greater than {max} characters long")
 @MapValueNotNull(message = "Field [metadata] must not have null values")
+@MapKeyInsensitiveUnique(message = "Field [metadata] must have case insensitive unique keys")
 public @interface ValidExternalMetadata {
     String message() default "Invalid metadata";
 
