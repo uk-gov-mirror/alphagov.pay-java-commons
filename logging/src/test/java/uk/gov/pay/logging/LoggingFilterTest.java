@@ -117,20 +117,9 @@ public class LoggingFilterTest {
 
     @Test
     public void shouldSetDiagnosticContextPerRequest() {
-        when(mockRequest.getRequestURI()).thenReturn("/publicauth-request");
-        when(mockRequest.getMethod()).thenReturn("GET");
-
         when(mockRequest.getHeader("X-Request-Id")).thenReturn("some-id");
         loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
         assertThat(MDC.get("x_request_id"), is("some-id"));
-
-        when(mockRequest.getHeader("X-Request-Id")).thenReturn("some-other-id");
-        loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        assertThat(MDC.get("x_request_id"), is("some-other-id"));
-
-        when(mockRequest.getHeader("X-Request-Id")).thenReturn(null);
-        loggingFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        assertThat(MDC.get("x_request_id"), is(nullValue()));
     }
 
     @SuppressWarnings("unchecked")
