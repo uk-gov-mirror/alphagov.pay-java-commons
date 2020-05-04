@@ -15,7 +15,7 @@
 
     <properties>
         <docker-client.version>8.16.0</docker-client.version>
-        <pact.version>3.6.14</pact.version>
+        <pact.version>3.6.15</pact.version>
         <hamcrest.version>2.2</hamcrest.version>
     </properties>
 
