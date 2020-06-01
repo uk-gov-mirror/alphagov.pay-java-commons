@@ -174,4 +174,14 @@ public interface LoggingKeys {
      */
     String GATEWAY_ERROR = "gateway_error";
 
+    /**
+     * The id of a payout with the gateway (Stripe specific)
+     */
+    String GATEWAY_PAYOUT_ID = "gateway_payout_id";
+
+    /**
+     * The id of the connect account in Stripe 
+     */
+    String CONNECT_ACCOUNT_ID = "stripe_connect_account_id";
+
 }
