@@ -1,7 +1,5 @@
 package uk.gov.pay.commons.testing.db;
 
-import com.spotify.docker.client.DefaultDockerClient;
-import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.exceptions.DockerCertificateException;
 import com.spotify.docker.client.exceptions.DockerException;
 import org.junit.rules.TestRule;

@@ -3,13 +3,13 @@ package uk.gov.pay.commons.utils.startup;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ApplicationStartupApplicationStartupDependentResourceCheckerTest {
     private ApplicationStartupDependentResourceChecker applicationStartupDependentResourceChecker;
 
@@ -37,7 +37,7 @@ public class ApplicationStartupApplicationStartupDependentResourceCheckerTest {
     @Captor
     ArgumentCaptor<LoggingEvent> loggingEventArgumentCaptor;
 
-    @Before
+    @BeforeEach
     public void setup() {
         mockAppender = mock(Appender.class);
         ((Logger) LoggerFactory.getLogger(ApplicationStartupDependentResourceChecker.class)).addAppender(mockAppender);

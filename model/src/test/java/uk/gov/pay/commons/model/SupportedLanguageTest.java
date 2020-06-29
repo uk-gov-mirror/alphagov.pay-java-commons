@@ -1,9 +1,10 @@
 package uk.gov.pay.commons.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SupportedLanguageTest {
 
@@ -19,19 +20,19 @@ public class SupportedLanguageTest {
         assertThat(result, is(SupportedLanguage.WELSH));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void frThrowsException() {
-        SupportedLanguage.fromIso639AlphaTwoCode("fr");
+        assertThrows(IllegalArgumentException.class, () -> SupportedLanguage.fromIso639AlphaTwoCode("fr"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void enUpperCaseThrowsException() {
-        SupportedLanguage.fromIso639AlphaTwoCode("EN");
+        assertThrows(IllegalArgumentException.class, () -> SupportedLanguage.fromIso639AlphaTwoCode("EN"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void englishUpperCaseThrowsException() {
-        SupportedLanguage.fromIso639AlphaTwoCode("ENGLISH");
+        assertThrows(IllegalArgumentException.class, () -> SupportedLanguage.fromIso639AlphaTwoCode("ENGLISH"));
     }
 
 }

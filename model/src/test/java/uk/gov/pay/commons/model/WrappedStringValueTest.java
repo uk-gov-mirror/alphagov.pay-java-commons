@@ -1,11 +1,12 @@
 package uk.gov.pay.commons.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WrappedStringValueTest {
 
@@ -70,7 +71,7 @@ public class WrappedStringValueTest {
     public void twoEqualObjectsHaveSameHashCode() {
         var a = ConcreteWrappedStringValue.valueOf("foo");
         var b = ConcreteWrappedStringValue.valueOf("foo");
-        
+
         assertThat(a.hashCode(), is(b.hashCode()));
     }
 
@@ -81,9 +82,9 @@ public class WrappedStringValueTest {
         assertThat(a.toString(), is("foo"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void cannotInstantiateWithNullString() {
-        ConcreteWrappedStringValue.valueOf(null);
+        assertThrows(NullPointerException.class, () -> ConcreteWrappedStringValue.valueOf(null));
     }
 
     private static class ConcreteWrappedStringValue extends WrappedStringValue {

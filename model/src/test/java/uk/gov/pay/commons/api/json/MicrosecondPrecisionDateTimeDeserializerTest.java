@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -14,11 +14,12 @@ import java.time.ZonedDateTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MicrosecondPrecisionDateTimeDeserializerTest {
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void before() {
         objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule();
@@ -43,11 +44,10 @@ public class MicrosecondPrecisionDateTimeDeserializerTest {
         assertThat(deserialized.getCreatedDate(), is(nullValue()));
     }
 
-    @Test(expected = JsonMappingException.class)
-    public void shouldThrowExceptionWhenNullValue() throws IOException {
+    @Test
+    public void shouldThrowExceptionWhenNullValue() {
         String testValue = "{\"created_date\":\"blah\"}";
-        final TestMicrosecondDeserializerObject deserialized = objectMapper.readValue(testValue, TestMicrosecondDeserializerObject.class);
-        assertThat(deserialized.getCreatedDate(), is(nullValue()));
+        assertThrows(JsonMappingException.class, () -> objectMapper.readValue(testValue, TestMicrosecondDeserializerObject.class));
     }
 }
 
