@@ -5,19 +5,20 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
-import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ApiResponseDateTimeDeserializerTest {
     private ObjectMapper objectMapper;
 
-    @Before
+    @BeforeEach
     public void before() {
         objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule();
@@ -42,11 +43,10 @@ public class ApiResponseDateTimeDeserializerTest {
         assertNull(response.getCreatedDate());
     }
 
-    @Test(expected = JsonMappingException.class)
-    public void shouldThrowExceptionWhenNullValue() throws IOException {
+    @Test
+    public void shouldThrowExceptionWhenNullValue() {
         String testValue = "{\"created_date\":\"blah\"}";
-        final RequestDateTimeJsonTest response = objectMapper.readValue(testValue, RequestDateTimeJsonTest.class);
-        assertNull(response.getCreatedDate());
+        assertThrows(JsonMappingException.class, () -> objectMapper.readValue(testValue, RequestDateTimeJsonTest.class));
     }
 }
 

@@ -9,8 +9,8 @@ import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.sessions.DatabaseLogin;
 import org.eclipse.persistence.sessions.Record;
 import org.eclipse.persistence.sessions.SessionProfiler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
@@ -41,7 +41,7 @@ public class XRaySessionProfilerTest {
     private DatabaseLogin loginDetails = new DatabaseLogin();
     private SessionProfiler xrayProfiler;
 
-    @Before
+    @BeforeEach
     public void before() {
         MockitoAnnotations.initMocks(this);
         xrayProfiler = new XRaySessionProfiler(mockedRecorder);
