@@ -12,16 +12,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.joining;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static uk.gov.pay.commons.model.charge.ExternalMetadata.MAX_KEY_LENGTH;
+import static uk.gov.pay.commons.model.charge.ExternalMetadata.MAX_KEY_VALUE_PAIRS;
+import static uk.gov.pay.commons.model.charge.ExternalMetadata.MAX_VALUE_LENGTH;
+import static uk.gov.pay.commons.model.charge.ExternalMetadata.MIN_KEY_LENGTH;
 
 public class ExternalMetadataTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private final String TOO_LONG_VALUE = "This value is over fifty characters long and is invalid!";
-    private final String TOO_LONG_KEY = "This key is over thirty characters long and is invalid!";
+    private final String TOO_LONG_VALUE = IntStream.rangeClosed(1, MAX_VALUE_LENGTH + 1).mapToObj(i -> "a").collect(joining());
+    private final String TOO_LONG_KEY = IntStream.rangeClosed(1, MAX_KEY_LENGTH + 1).mapToObj(i -> "a").collect(joining());
 
     @Test
     public void shouldPassValidation() {
@@ -48,7 +53,7 @@ public class ExternalMetadataTest {
         Set<ConstraintViolation<ExternalMetadata>> violations = validator.validate(invalidExternalMetadata);
 
         assertThat(violations.size(), is(1));
-        assertThat(violations.iterator().next().getMessage(), is("Field [metadata] cannot have more than 10 key-value pairs"));
+        assertThat(violations.iterator().next().getMessage(), is("Field [metadata] cannot have more than " + MAX_KEY_VALUE_PAIRS + " key-value pairs"));
     }
 
     @Test
@@ -59,7 +64,8 @@ public class ExternalMetadataTest {
         Set<ConstraintViolation<ExternalMetadata>> violations = validator.validate(invalidExternalMetadata);
 
         assertThat(violations.size(), is(1));
-        assertThat(violations.iterator().next().getMessage(), is("Field [metadata] keys must be between 1 and 30 characters long"));
+        assertThat(violations.iterator().next().getMessage(),
+                is("Field [metadata] keys must be between " + MIN_KEY_LENGTH + " and " + MAX_KEY_LENGTH + " characters long"));
     }
 
     @Test
@@ -70,7 +76,8 @@ public class ExternalMetadataTest {
         Set<ConstraintViolation<ExternalMetadata>> violations = validator.validate(invalidExternalMetadata);
 
         assertThat(violations.size(), is(1));
-        assertThat(violations.iterator().next().getMessage(), is("Field [metadata] keys must be between 1 and 30 characters long"));
+        assertThat(violations.iterator().next().getMessage(),
+                is("Field [metadata] keys must be between " + MIN_KEY_LENGTH + " and " + MAX_KEY_LENGTH + " characters long"));
     }
 
     @Test
@@ -81,7 +88,8 @@ public class ExternalMetadataTest {
         Set<ConstraintViolation<ExternalMetadata>> violations = validator.validate(invalidExternalMetadata);
 
         assertThat(violations.size(), is(1));
-        assertThat(violations.iterator().next().getMessage(), is("Field [metadata] values must be no greater than 50 characters long"));
+        assertThat(violations.iterator().next().getMessage(),
+                is("Field [metadata] values must be no greater than " + MAX_VALUE_LENGTH + " characters long"));
     }
 
     @Test
@@ -128,8 +136,8 @@ public class ExternalMetadataTest {
         ExternalMetadata invalidExternalMetadata = new ExternalMetadata(metadata);
         Set<String> expectedErrorMessages = Set.of(
                 "Field [metadata] values must be of type String, Boolean or Number",
-                "Field [metadata] values must be no greater than 50 characters long",
-                "Field [metadata] keys must be between 1 and 30 characters long");
+                "Field [metadata] values must be no greater than " + MAX_VALUE_LENGTH + " characters long",
+                "Field [metadata] keys must be between " + MIN_KEY_LENGTH + " and " + MAX_KEY_LENGTH + " characters long");
 
         Set<ConstraintViolation<ExternalMetadata>> violations = validator.validate(invalidExternalMetadata);
 
@@ -140,7 +148,7 @@ public class ExternalMetadataTest {
     }
 
     @Test
-    public void shouldFailWithDuplicateCaseInsensitiveKEysViolations() {
+    public void shouldFailWithDuplicateCaseInsensitiveKeysViolations() {
         Map<String, Object> metadata = Map.of(
                 "key", "string",
                 "Key", 1L
