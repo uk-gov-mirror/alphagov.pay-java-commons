@@ -1,5 +1,6 @@
 package uk.gov.pay.commons.validation;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -49,5 +50,14 @@ public class DateTimeUtils {
      */
     public static String toLocalDateString(ZonedDateTime zonedDateTime) {
         return zonedDateTime.withZoneSameInstant(ZoneOffset.UTC).toLocalDate().format(localDateFormatter);
+    }
+
+    public static Optional<ZonedDateTime> fromLocalDateOnlyString(String localDateString) {
+        try {
+            ZonedDateTime utcTime = LocalDate.parse(localDateString).atStartOfDay(ZoneOffset.UTC);
+            return Optional.of(utcTime);
+        } catch (DateTimeParseException ex) {
+            return Optional.empty();
+        }
     }
 }

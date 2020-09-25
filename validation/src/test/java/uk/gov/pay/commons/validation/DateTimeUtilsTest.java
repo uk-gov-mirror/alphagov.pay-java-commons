@@ -72,4 +72,19 @@ public class DateTimeUtilsTest {
         assertTrue(result.isPresent());
         assertThat(result.get().toString(), endsWith("Z"));
     }
+
+    @Test
+    public void shouldCovertNonZonedDateStringZonedISO_8601StringToADateTime() {
+        String date = "2020-09-25";
+        Optional<ZonedDateTime> result = DateTimeUtils.fromLocalDateOnlyString(date);
+        assertThat(result.isPresent(), is(true));
+        assertThat(result.get().toString(), is("2020-09-25T00:00Z"));
+    }
+
+    @Test
+    public void shouldNotCovertNonZonedDateStringToADateTimeIfNotISO_8601() {
+        String date = "2020/09/25";
+        Optional<ZonedDateTime> result = DateTimeUtils.fromLocalDateOnlyString(date);
+        assertThat(result.isPresent(), is(false));
+    }
 }
