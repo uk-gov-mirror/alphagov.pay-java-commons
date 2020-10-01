@@ -38,21 +38,21 @@ public class CardExpiryDate {
         return new CardExpiryDate(expiryDate);
     }
 
-    public String get2DigitMonth() {
+    public String getTwoDigitMonth() {
         return month2Digits;
     }
 
-    public String get2DigitYear() {
+    public String getTwoDigitYear() {
         return year2Digits;
     }
 
-    public String get4DigitYear() {
+    public String getFourDigitYear() {
         return PREFIX_TO_MAKE_2_DIGIT_YEAR_INTO_4_DIGIT_YEAR + year2Digits;
     }
 
     public YearMonth toYearMonth() {
         var month = Integer.parseInt(month2Digits);
-        var year = Integer.parseInt(get4DigitYear());
+        var year = Integer.parseInt(getFourDigitYear());
         return YearMonth.of(year, month);
     }
 
@@ -60,6 +60,7 @@ public class CardExpiryDate {
      * Returns the card expiry date in the MM/yy format used for expiry dates
      * on most payment cards. For example, "09/22".
      */
+    @Override
     public String toString() {
         return month2Digits + '/' + year2Digits;
     }
