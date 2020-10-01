@@ -26,7 +26,7 @@ class CardExpiryDateTest {
     void month01Parses() {
         var input = "01/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("01"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("01"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, JANUARY)));
         assertThat(cardExpiryDate.toString(), is("01/22"));
     }
@@ -35,7 +35,7 @@ class CardExpiryDateTest {
     void month02Parses() {
         var input = "02/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("02"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("02"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, FEBRUARY)));
         assertThat(cardExpiryDate.toString(), is("02/22"));
     }
@@ -44,7 +44,7 @@ class CardExpiryDateTest {
     void month03Parses() {
         var input = "03/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("03"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("03"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, MARCH)));
         assertThat(cardExpiryDate.toString(), is("03/22"));
     }
@@ -53,7 +53,7 @@ class CardExpiryDateTest {
     void month04Parses() {
         var input = "04/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("04"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("04"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, APRIL)));
         assertThat(cardExpiryDate.toString(), is("04/22"));
     }
@@ -62,7 +62,7 @@ class CardExpiryDateTest {
     void month05Parses() {
         var input = "05/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("05"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("05"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, MAY)));
         assertThat(cardExpiryDate.toString(), is("05/22"));
     }
@@ -71,7 +71,7 @@ class CardExpiryDateTest {
     void month06Parses() {
         var input = "06/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("06"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("06"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, JUNE)));
         assertThat(cardExpiryDate.toString(), is("06/22"));
     }
@@ -80,7 +80,7 @@ class CardExpiryDateTest {
     void month07Parses() {
         var input = "07/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("07"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("07"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, JULY)));
         assertThat(cardExpiryDate.toString(), is("07/22"));
     }
@@ -89,7 +89,7 @@ class CardExpiryDateTest {
     void month08Parses() {
         var input = "08/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("08"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("08"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, AUGUST)));
         assertThat(cardExpiryDate.toString(), is("08/22"));
     }
@@ -98,7 +98,7 @@ class CardExpiryDateTest {
     void month09Parses() {
         var input = "09/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("09"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("09"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, SEPTEMBER)));
         assertThat(cardExpiryDate.toString(), is("09/22"));
     }
@@ -107,7 +107,7 @@ class CardExpiryDateTest {
     void month10Parses() {
         var input = "10/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("10"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("10"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/22"));
     }
@@ -116,7 +116,7 @@ class CardExpiryDateTest {
     void month11Parses() {
         var input = "11/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("11"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("11"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, NOVEMBER)));
         assertThat(cardExpiryDate.toString(), is("11/22"));
     }
@@ -125,7 +125,7 @@ class CardExpiryDateTest {
     void month12Parses() {
         var input = "12/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitMonth(), is("12"));
+        assertThat(cardExpiryDate.getTwoDigitMonth(), is("12"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, DECEMBER)));
         assertThat(cardExpiryDate.toString(), is("12/22"));
     }
@@ -134,8 +134,8 @@ class CardExpiryDateTest {
     void year22Parses() {
         var input = "10/22";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitYear(), is("22"));
-        assertThat(cardExpiryDate.get4DigitYear(), is("2022"));
+        assertThat(cardExpiryDate.getTwoDigitYear(), is("22"));
+        assertThat(cardExpiryDate.getFourDigitYear(), is("2022"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2022, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/22"));
     }
@@ -144,8 +144,8 @@ class CardExpiryDateTest {
     void year00Parses() {
         var input = "10/00";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitYear(), is("00"));
-        assertThat(cardExpiryDate.get4DigitYear(), is("2000"));
+        assertThat(cardExpiryDate.getTwoDigitYear(), is("00"));
+        assertThat(cardExpiryDate.getFourDigitYear(), is("2000"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2000, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/00"));
     }
@@ -154,8 +154,8 @@ class CardExpiryDateTest {
     void year01Parses() {
         var input = "10/01";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitYear(), is("01"));
-        assertThat(cardExpiryDate.get4DigitYear(), is("2001"));
+        assertThat(cardExpiryDate.getTwoDigitYear(), is("01"));
+        assertThat(cardExpiryDate.getFourDigitYear(), is("2001"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2001, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/01"));
     }
@@ -164,8 +164,8 @@ class CardExpiryDateTest {
     void year09Parses() {
         var input = "10/09";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitYear(), is("09"));
-        assertThat(cardExpiryDate.get4DigitYear(), is("2009"));
+        assertThat(cardExpiryDate.getTwoDigitYear(), is("09"));
+        assertThat(cardExpiryDate.getFourDigitYear(), is("2009"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2009, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/09"));
     }
@@ -174,8 +174,8 @@ class CardExpiryDateTest {
     void year30Parses() {
         var input = "10/30";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitYear(), is("30"));
-        assertThat(cardExpiryDate.get4DigitYear(), is("2030"));
+        assertThat(cardExpiryDate.getTwoDigitYear(), is("30"));
+        assertThat(cardExpiryDate.getFourDigitYear(), is("2030"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2030, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/30"));
     }
@@ -184,8 +184,8 @@ class CardExpiryDateTest {
     void year99Parses() {
         var input = "10/99";
         var cardExpiryDate = CardExpiryDate.valueOf(input);
-        assertThat(cardExpiryDate.get2DigitYear(), is("99"));
-        assertThat(cardExpiryDate.get4DigitYear(), is("2099"));
+        assertThat(cardExpiryDate.getTwoDigitYear(), is("99"));
+        assertThat(cardExpiryDate.getFourDigitYear(), is("2099"));
         assertThat(cardExpiryDate.toYearMonth(), is(YearMonth.of(2099, OCTOBER)));
         assertThat(cardExpiryDate.toString(), is("10/99"));
     }
