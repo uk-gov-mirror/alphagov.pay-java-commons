@@ -251,6 +251,18 @@ class CardExpiryDateTest {
     }
 
     @Test
+    void month00ThrowsException() {
+        var input = "00/22";
+        assertThrows(IllegalArgumentException.class, () -> CardExpiryDate.valueOf(input));
+    }
+
+    @Test
+    void yearOpenParenthesis0ThrowsException() {
+        var input = "10/(2";
+        assertThrows(IllegalArgumentException.class, () -> CardExpiryDate.valueOf(input));
+    }
+
+    @Test
     void threeDigitMonthThrowsException() {
         var input = "100/22";
         assertThrows(IllegalArgumentException.class, () -> CardExpiryDate.valueOf(input));

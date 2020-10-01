@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class CardExpiryDate {
 
-    public static final Pattern CARD_EXPIRY_DATE_PATTERN = Pattern.compile("(0[1-9]|1[0-2])/([(0-9]{2})");
+    public static final Pattern CARD_EXPIRY_DATE_PATTERN = Pattern.compile("(0[1-9]|1[0-2])/([0-9]{2})");
 
     private static final String PREFIX_TO_MAKE_2_DIGIT_YEAR_INTO_4_DIGIT_YEAR = "20";
 
