@@ -12,6 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static uk.gov.pay.logging.LoggingKeys.HTTP_STATUS;
+import static uk.gov.pay.logging.LoggingKeys.RESPONSE_TIME;
+import static uk.gov.pay.logging.LoggingKeys.URL;
+
 /**
  * This programmatically configures the dropwizard request log json logging to be equivalent to:
  *
@@ -40,10 +44,10 @@ public class GovUkPayDropwizardRequestJsonLogLayoutFactory extends AccessJsonLay
     private static final Map<String, String> CUSTOM_FIELD_NAMES = Map.of(
             "timestamp", "@timestamp",
             "userAgent", "user_agent",
-            "requestTime", "response_time",
-            "uri", "url",
+            "requestTime", RESPONSE_TIME,
+            "uri", URL,
             "protocol", "http_version",
-            "status", "status_code",
+            "status", HTTP_STATUS,
             "contentLength", "content_length",
             "remoteAddress", "remote_address"
     );

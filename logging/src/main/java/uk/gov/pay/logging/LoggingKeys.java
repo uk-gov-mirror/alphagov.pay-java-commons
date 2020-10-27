@@ -127,7 +127,22 @@ public interface LoggingKeys {
     /**
      * The HTTP status we sent to a client
      */
-    String HTTP_STATUS = "http_status";
+    String HTTP_STATUS = "status_code";
+
+    /**
+     * The HTTP method for a request
+     */
+    String METHOD = "method";
+
+    /**
+     * The URL for a request
+     */
+    String URL = "url";
+
+    /**
+     * The time taken for the server to respond to a request
+     */
+    String RESPONSE_TIME = "response_time";
 
     /**
      * The HTTP status code we received from a remote server (e.g. a payment provider)
