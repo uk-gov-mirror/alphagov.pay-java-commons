@@ -5,52 +5,28 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.json.AccessJsonLayoutBaseFactory;
-import io.dropwizard.logging.json.layout.AccessJsonLayout;
 import io.dropwizard.logging.json.layout.TimestampFormatter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
-import static uk.gov.pay.logging.LoggingKeys.HTTP_STATUS;
-import static uk.gov.pay.logging.LoggingKeys.RESPONSE_TIME;
-import static uk.gov.pay.logging.LoggingKeys.URL;
-
 /**
- * This programmatically configures the dropwizard request log json logging to be equivalent to:
+ * Our custom implementation of the factory used to format dropwizard request logs as json.
+ * This is configured in Java apps by adding the following to the config.yaml:
  *
- *       - type: console
- *         layout:
- *           type: access-json
- *           timestampFormat: "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
- *           CUSTOM_FIELD_NAMES:
- *             timestamp: "@timestamp"
- *             userAgent: "user_agent"
- *             requestTime: "response_time"
- *             uri: "url"
- *             protocol: "http_version"
- *             status: "status_code"
- *             contentLength: "content_length"
- *             remoteAddress: "remote_address"
- *           additionalFields:
- *             "@version": 1
+ * requestLog:
+ *  appenders:
+ *    - type: console
+ *      layout:
+ *        type: govuk-pay-access-json
+ *        additionalFields:
+ *          container: "ledger"
+ *          environment: ${ENVIRONMENT}
  *             
  * More additional fields can be added as required; however it is mandatory to add a "container" key as this is 
  * standard across all our dropwizard apps.
  */
 @JsonTypeName("govuk-pay-access-json")
 public class GovUkPayDropwizardRequestJsonLogLayoutFactory extends AccessJsonLayoutBaseFactory {
-
-    private static final Map<String, String> CUSTOM_FIELD_NAMES = Map.of(
-            "timestamp", "@timestamp",
-            "userAgent", "user_agent",
-            "requestTime", RESPONSE_TIME,
-            "uri", URL,
-            "protocol", "http_version",
-            "status", HTTP_STATUS,
-            "contentLength", "content_length",
-            "remoteAddress", "remote_address"
-    );
 
     private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
@@ -60,13 +36,9 @@ public class GovUkPayDropwizardRequestJsonLogLayoutFactory extends AccessJsonLay
             throw new RuntimeException("When using govuk-pay-access-json, an additional field with the key of " +
                     "\"container\" must be present");
         }
-        var additionalFields = new HashMap<>(this.getAdditionalFields());
-        additionalFields.put("@version", 1);
-        var jsonLayout = new AccessJsonLayout(this.createDropwizardJsonFormatter(), createTimestampFormatter(timeZone),
-                getIncludes(), CUSTOM_FIELD_NAMES, additionalFields);
+        var jsonLayout = new GovUkPayDropwizardRequestJsonLogLayout(this.createDropwizardJsonFormatter(),
+                this.createTimestampFormatter(timeZone), 1, this.getAdditionalFields());
         jsonLayout.setContext(context);
-        jsonLayout.setRequestHeaders(getRequestHeaders());
-        jsonLayout.setResponseHeaders(getResponseHeaders());
         return jsonLayout;
     }
 
