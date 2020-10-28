@@ -13,6 +13,11 @@ import javax.ws.rs.client.ClientResponseFilter;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+import static uk.gov.pay.logging.LoggingKeys.HTTP_STATUS;
+import static uk.gov.pay.logging.LoggingKeys.METHOD;
+import static uk.gov.pay.logging.LoggingKeys.RESPONSE_TIME;
+import static uk.gov.pay.logging.LoggingKeys.URL;
 
 public class RestClientLoggingFilter implements ClientRequestFilter, ClientResponseFilter {
 
@@ -30,7 +35,9 @@ public class RestClientLoggingFilter implements ClientRequestFilter, ClientRespo
         logger.info(format("[%s] - %s to %s began",
                 requestId.get(),
                 requestContext.getMethod(),
-                requestContext.getUri()));
+                requestContext.getUri(),
+                kv(METHOD, requestContext.getMethod()),
+                kv(URL, requestContext.getUri())));
 
     }
 
@@ -42,7 +49,11 @@ public class RestClientLoggingFilter implements ClientRequestFilter, ClientRespo
                 requestId.get(),
                 requestContext.getMethod(),
                 requestContext.getUri(),
-                elapsed));
+                elapsed),
+                kv(METHOD, requestContext.getMethod()),
+                kv(URL, requestContext.getUri()),
+                kv(HTTP_STATUS, responseContext.getStatus()),
+                kv(RESPONSE_TIME, elapsed));
 
         requestId.remove();
         timer.get().stop();
