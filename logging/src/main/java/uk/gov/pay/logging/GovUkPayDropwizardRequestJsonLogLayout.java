@@ -7,10 +7,12 @@ import io.dropwizard.logging.json.layout.TimestampFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static uk.gov.pay.logging.LoggingKeys.HTTP_STATUS;
 import static uk.gov.pay.logging.LoggingKeys.MDC_REQUEST_ID_KEY;
 import static uk.gov.pay.logging.LoggingKeys.METHOD;
+import static uk.gov.pay.logging.LoggingKeys.REMOTE_ADDRESS;
 import static uk.gov.pay.logging.LoggingKeys.RESPONSE_TIME;
 import static uk.gov.pay.logging.LoggingKeys.URL;
 
@@ -18,6 +20,7 @@ public class GovUkPayDropwizardRequestJsonLogLayout extends AbstractJsonLayout<I
 
     private static final String HEADER_REQUEST_ID = "X-Request-Id";
     private static final String HEADER_USER_AGENT = "User-Agent";
+    private static final String HEADER_FORWARDED_FOR = "X-Forwarded-For";
 
     private int logVersion;
     private final Map<String, Object> additionalFields;
@@ -43,10 +46,13 @@ public class GovUkPayDropwizardRequestJsonLogLayout extends AbstractJsonLayout<I
         putIfNotNull(jsonMap, "@timestamp", formatTimeStamp(event.getTimeStamp()));
         putIfNotNull(jsonMap, URL, event.getRequestURI());
         putIfNotNull(jsonMap, METHOD, event.getMethod());
-        putIfNotNull(jsonMap, "remote_address", event.getRemoteAddr());
         putIfNotNull(jsonMap,"http_version", event.getProtocol());
         putIfNotNull(jsonMap, "user_agent", event.getRequestHeader(HEADER_USER_AGENT));
         putIfNotNull(jsonMap, MDC_REQUEST_ID_KEY, event.getRequestHeader(HEADER_REQUEST_ID));
+
+        Optional.ofNullable(event.getRequestHeader(HEADER_FORWARDED_FOR))
+                .map(forwarded -> forwarded.split(",")[0])
+                .ifPresent(clientAddress -> jsonMap.put(REMOTE_ADDRESS, clientAddress));
         
         jsonMap.putAll(additionalFields);
         

@@ -150,6 +150,11 @@ public interface LoggingKeys {
     String REMOTE_HTTP_STATUS = "remote_http_status";
 
     /**
+     * The Internet Protocol (IP) address of the client that sent the request.
+     */
+    String REMOTE_ADDRESS = "remote_address";
+
+    /**
      * AWS error code
      */
     String AWS_ERROR_CODE = "aws_error_code";
