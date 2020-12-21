@@ -1,21 +1,17 @@
 package uk.gov.pay.commons.model;
 
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 
-/**
- * Custom ZonedDateTime formatter that will format to millisecond precision.
- * This will be padding with zeroes missing milliseconds and will drop
- * anything after the milliseconds field
- */
 public class ApiResponseDateTimeFormatter {
 
+    /**
+     * DateTimeFormatter that produces a standard ISO-8601 format date and time
+     * in UTC with millisecond precision (three fractional second digits, zero
+     * right-padded if necessary), for example 2015-10-21T07:28:00.000Z
+     */
     public static final DateTimeFormatter ISO_INSTANT_MILLISECOND_PRECISION =
-            new DateTimeFormatterBuilder()
-                    .appendInstant(3)
-                    .toFormatter(Locale.ENGLISH)
-                    .withZone(ZoneOffset.UTC);
+            new DateTimeFormatterBuilder().appendInstant(3).toFormatter(Locale.ENGLISH);
 
 }
