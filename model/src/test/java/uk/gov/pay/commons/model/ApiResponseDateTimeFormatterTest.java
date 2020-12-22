@@ -2,6 +2,7 @@ package uk.gov.pay.commons.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -13,11 +14,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static uk.gov.pay.commons.model.ApiResponseDateTimeFormatter.ISO_INSTANT_MILLISECOND_PRECISION;
 
-public class ApiResponseDateTimeFormatterTest {
+class ApiResponseDateTimeFormatterTest {
 
     @Test
-    public void shouldConvertUtcToIsoStringWithMillisecondPrecision() {
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(LocalDate.of(2015, OCTOBER, 21),
+    void shouldConvertInstantToIsoStringWithMillisecondPrecision() {
+        var instant = Instant.parse("2015-10-21T07:28:00.12356789Z");
+
+        String result = ISO_INSTANT_MILLISECOND_PRECISION.format(instant);
+
+        assertThat(result, is("2015-10-21T07:28:00.123Z"));
+    }
+
+    @Test
+    void shouldConverInstantExactlyOnTheSecondToIsoStringWithMillisecondPrecision() {
+        var instant = Instant.parse("2015-10-21T07:28:00Z");
+
+        String result = ISO_INSTANT_MILLISECOND_PRECISION.format(instant);
+
+        assertThat(result, is("2015-10-21T07:28:00.000Z"));
+    }
+    
+    @Test
+    void shouldConvertUtcZonedDateTimeToIsoStringWithMillisecondPrecision() {
+        var zonedDateTime = ZonedDateTime.of(LocalDate.of(2015, OCTOBER, 21),
                 LocalTime.of(7, 28, 0, 123456789), ZoneOffset.UTC);
 
         String result = ISO_INSTANT_MILLISECOND_PRECISION.format(zonedDateTime);
@@ -26,8 +45,8 @@ public class ApiResponseDateTimeFormatterTest {
     }
 
     @Test
-    public void shouldConvertNonUtcToIsoStringWithMillisecondPrecision() {
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(LocalDate.of(2015, OCTOBER, 21),
+    void shouldConvertNonUtcZonedDateTimeToIsoStringWithMillisecondPrecision() {
+        var zonedDateTime = ZonedDateTime.of(LocalDate.of(2015, OCTOBER, 21),
                 LocalTime.of(7, 28, 0, 123456789), ZoneId.of("America/Los_Angeles"));
 
         String result = ISO_INSTANT_MILLISECOND_PRECISION.format(zonedDateTime);
@@ -36,8 +55,8 @@ public class ApiResponseDateTimeFormatterTest {
     }
 
     @Test
-    public void shouldConvertExactlyOnTheSecondToIsoStringWithMillisecondPrecision() {
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(LocalDate.of(2015, OCTOBER, 21),
+    void shouldConvertZonedDateTimeExactlyOnTheSecondToIsoStringWithMillisecondPrecision() {
+        var zonedDateTime = ZonedDateTime.of(LocalDate.of(2015, OCTOBER, 21),
                 LocalTime.of(7, 28, 0), ZoneOffset.UTC);
 
         String result = ISO_INSTANT_MILLISECOND_PRECISION.format(zonedDateTime);
