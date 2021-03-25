@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>uk.gov.pay</groupId>
+    <groupId>uk.gov.service.payments</groupId>
     <artifactId>pay-java-commons</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
@@ -16,8 +16,6 @@
         <junit5.version>5.6.2</junit5.version>
         <assertj.version>1.7.25</assertj.version>
         <jackson.version>2.11.1</jackson.version>
-        <bintray.username/>
-        <bintray.apiKey/>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
@@ -153,14 +151,28 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
             </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>bintray-govuk-pay-pay-java-commons</id>
-            <name>govuk-pay-pay-java-commons</name>
-            <url>https://api.bintray.com/maven/govuk-pay/pay-java-commons/pay-java-commons/;publish=1</url>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 
