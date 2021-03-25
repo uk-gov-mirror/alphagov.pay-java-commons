@@ -10,7 +10,7 @@ To include the testing module, add this to your project's pom.xml:
 
 ```
  <dependency>
-   <groupId>uk.gov.pay</groupId>
+   <groupId>uk.gov.service.payments</groupId>
    <artifactId>testing</artifactId>
    <version>1.0.0-{version}</version>
    <scope>test</scope>
@@ -21,7 +21,7 @@ To include the utils module, add this to your project's pom.xml:
                              
 ```
  <dependency>
-   <groupId>uk.gov.pay</groupId>
+   <groupId>uk.gov.service.payments</groupId>
    <artifactId>utils</artifactId>
    <version>1.0.0-{version}</version>
  </dependency>
