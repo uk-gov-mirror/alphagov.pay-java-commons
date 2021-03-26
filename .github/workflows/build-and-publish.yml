@@ -1,0 +1,26 @@
+name: Release to maven
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Set package version
+        run: |
+          mvn versions:set -DnewVersion="1.0.$(date +"%Y%m%d%H%M%S")"
+      - name: Release Maven package
+        uses: samuelmeuli/action-maven-publish@v1
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          nexus_username: ${{ secrets.MAVEN_USERNAME }}
+          nexus_password: ${{ secrets.MAVEN_PASSWORD }}
+          server_id: ossrh
