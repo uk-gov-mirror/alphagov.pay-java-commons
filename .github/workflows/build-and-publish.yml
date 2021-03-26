@@ -2,7 +2,7 @@ name: Release to maven
 on:
   push:
     branches:
-      - PP-7938-release-to-maven
+      - master
 jobs:
   release:
     runs-on: ubuntu-18.04
@@ -13,6 +13,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Set package version
+        run: |
+          mvn versions:set -DnewVersion="1.0.0-$(date +"%Y%m%d%H%M%S")"
       - name: Release Maven package
         uses: samuelmeuli/action-maven-publish@v1
         with:
