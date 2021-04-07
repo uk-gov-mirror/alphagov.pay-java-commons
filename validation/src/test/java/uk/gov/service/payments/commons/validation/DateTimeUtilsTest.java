@@ -15,32 +15,32 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DateTimeUtilsTest {
+class DateTimeUtilsTest {
 
-    public static final DateTimeFormatter ISO_INSTANT_MILLISECOND_PRECISION =
+    static final DateTimeFormatter ISO_INSTANT_MILLISECOND_PRECISION =
             new DateTimeFormatterBuilder()
                     .appendInstant(3)
                     .toFormatter(Locale.ENGLISH)
                     .withZone(ZoneOffset.UTC);
     
     @Test
-    public void shouldConvertUTCZonedDateTimeToAISO_8601_UTCString() {
-        ZonedDateTime localDateTime = ZonedDateTime.of(2010, 11, 13, 12, 0, 0, 999, ZoneId.of("Z"));
+    void shouldConvertUTCZonedDateTimeToAISO_8601_UTCString() {
+        ZonedDateTime localDateTime = ZonedDateTime.of(2010, 11, 13, 12, 0, 0, 999, ZoneOffset.UTC);
 
         String dateString = ISO_INSTANT_MILLISECOND_PRECISION.format(localDateTime);
         assertThat(dateString, is("2010-11-13T12:00:00.000Z"));
     }
 
     @Test
-    public void shouldConvertUTCZonedDateTimeToLocalDateString() {
-        ZonedDateTime localDateTime = ZonedDateTime.of(2010, 11, 13, 12, 0, 0, 0, ZoneId.of("Z"));
+    void shouldConvertUTCZonedDateTimeToLocalDateString() {
+        ZonedDateTime localDateTime = ZonedDateTime.of(2010, 11, 13, 12, 0, 0, 0, ZoneOffset.UTC);
 
         String dateString = DateTimeUtils.toLocalDateString(localDateTime);
         assertThat(dateString, is("2010-11-13"));
     }
 
     @Test
-    public void shouldConvertNonUTCZonedDateTimeToAISO_8601_UTCString() {
+    void shouldConvertNonUTCZonedDateTimeToAISO_8601_UTCString() {
         ZonedDateTime localDateTime = ZonedDateTime.of(2010, 11, 13, 12, 0, 0, 999, ZoneId.of("Europe/Paris"));
 
         String dateString = ISO_INSTANT_MILLISECOND_PRECISION.format(localDateTime);
@@ -48,7 +48,7 @@ public class DateTimeUtilsTest {
     }
 
     @Test
-    public void shouldConvertUTCZonedISO_8601StringToADateTime() {
+    void shouldConvertUTCZonedISO_8601StringToADateTime() {
         String aDate = "2010-01-01T12:00:00Z";
         Optional<ZonedDateTime> result = DateTimeUtils.toUTCZonedDateTime(aDate);
         assertTrue(result.isPresent());
@@ -61,7 +61,7 @@ public class DateTimeUtilsTest {
     }
 
     @Test
-    public void shouldConvertNonUTCZonedISO_8601StringToADateTime() {
+    void shouldConvertNonUTCZonedISO_8601StringToADateTime() {
         String aDate = "2010-01-01T12:00:00+01:00[Europe/Paris]";
         Optional<ZonedDateTime> result = DateTimeUtils.toUTCZonedDateTime(aDate);
         assertTrue(result.isPresent());
@@ -74,7 +74,7 @@ public class DateTimeUtilsTest {
     }
 
     @Test
-    public void shouldCovertNonZonedDateStringZonedISO_8601StringToADateTime() {
+    void shouldCovertNonZonedDateStringZonedISO_8601StringToADateTime() {
         String date = "2020-09-25";
         Optional<ZonedDateTime> result = DateTimeUtils.fromLocalDateOnlyString(date);
         assertThat(result.isPresent(), is(true));
@@ -82,7 +82,7 @@ public class DateTimeUtilsTest {
     }
 
     @Test
-    public void shouldNotCovertNonZonedDateStringToADateTimeIfNotISO_8601() {
+    void shouldNotCovertNonZonedDateStringToADateTimeIfNotISO_8601() {
         String date = "2020/09/25";
         Optional<ZonedDateTime> result = DateTimeUtils.fromLocalDateOnlyString(date);
         assertThat(result.isPresent(), is(false));
