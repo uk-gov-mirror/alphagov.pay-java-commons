@@ -10,5 +10,3 @@ updates:
   - dependencies
   - govuk-pay
   - java
-  allow:
-  - dependency-type: production
