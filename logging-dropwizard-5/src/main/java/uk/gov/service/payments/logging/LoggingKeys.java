@@ -244,4 +244,10 @@ public interface LoggingKeys {
      */
     String SQS_MESSAGE_ID = "sqs_message_id";
 
+    /**
+     * The gateway transaction Id
+     */
+    String GATEWAY_TRANSACTION_ID = "gateway_transaction_id";
+
+
 }
